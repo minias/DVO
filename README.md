@@ -8,6 +8,8 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 플레이어는 보드 위를 이동하며 성장하고, 장비를 획득하고, 몬스터를 처치하며, 다른 플레이어와 협력 또는 경쟁할 수 있습니다.
 
+![v0.0.1](./docs/img/v0.0.1.PNG)
+
 ---
 
 ## 핵심 컨셉
@@ -58,7 +60,7 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 * SvelteKit
 * TypeScript
-* svelte-i18n
+* paraglide
 
 ## Backend (향후)
 
@@ -80,51 +82,15 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ```text
 diceverse-online
-
-├── src
-│
-├── config
-│   ├── game.config.ts
-│   ├── board.config.ts
-│   ├── dice.config.ts
-│   └── i18n.config.ts
-│
-├── types
-│   ├── game.type.ts
-│   ├── board.type.ts
-│   ├── player.type.ts
-│   └── i18n.type.ts
-│
-├── stores
-│   ├── game.store.ts
-│   ├── player.store.ts
-│   └── board.store.ts
-│
-├── locales
-│   ├── ko
-│   │   ├── ui.json
-│   │   ├── board.json
-│   │   ├── monster.json
-│   │   ├── item.json
-│   │   └── system.json
-│   │
-│   └── en
-│       ├── ui.json
-│       ├── board.json
-│       ├── monster.json
-│       ├── item.json
-│       └── system.json
-│
-├── i18n
-│   └── index.ts
-│
-├── lib
+├─lib
 │   ├── components
-│   │
+│   ├── paraglide
+│   │   └── messages
 │   ├── board
 │   │   ├── Board.svelte
 │   │   ├── Tile.svelte
 │   │   └── Hero.svelte
+│   ├── game
 │   │
 │   ├── player
 │   │   ├── StatusBar.svelte
@@ -137,7 +103,26 @@ diceverse-online
 │   └── layout
 │       ├── Header.svelte
 │       └── Footer.svelte
-│
+├─routes
+├─config
+│   ├── game.config.ts
+│   ├── board.config.ts
+│   └── dice.config.ts
+├─game
+│  ├─core
+│  ├─renderers
+│  ├─board
+│  ├─entities
+│  ├─input
+│  └─world
+├─types
+│   ├── game.type.ts
+│   ├── board.type.ts
+│   └── player.type.ts
+├─stores
+│   ├── game.store.ts
+│   ├── player.store.ts
+│   └── board.store.ts
 ├── services
 │   ├── dice.service.ts
 │   └── board.service.ts

@@ -5,7 +5,6 @@ import { BOARD_CONFIG } from '$config/board.config';
 import { createBoard } from '../board/board.generator';
 import type { Renderer } from '../core/renderer.interface';
 import { InputManager } from '../input/input.manager';
-import type { World } from '../world/world';
 
 type HeroState = {
 	position: number;
@@ -19,15 +18,11 @@ export class CanvasRenderer implements Renderer {
 
 	private spacePressed = false;
 
-	// HERO state (temporary)
+	// ✅ HERO를 renderer state로 격리 (임시 transition)
 	private hero: HeroState = {
 		position: 1
 	};
-	private world!: World;
 
-	public setWorld(world: World): void {
-		this.world = world;
-	}
 	public initialize(canvas: HTMLCanvasElement): void {
 		this.canvas = canvas;
 
@@ -50,7 +45,7 @@ export class CanvasRenderer implements Renderer {
 		const tiles = createBoard();
 
 		// =========================
-		// INPUT → HERO STATE
+		// INPUT → STATE UPDATE (임시 유지)
 		// =========================
 		if (this.input.isPressed('Space') && !this.spacePressed) {
 			this.spacePressed = true;
@@ -87,27 +82,25 @@ export class CanvasRenderer implements Renderer {
 		const startX = (this.canvas.width - boardWidth) / 2;
 		const startY = (this.canvas.height - boardHeight) / 2;
 
+		const scale = tileSize / BOARD_CONFIG.TILE_SIZE;
+
+		const idFontSize = Math.max(10, Math.floor(tileSize * 0.15));
+		const textFontSize = Math.max(9, Math.floor(tileSize * 0.13));
+
 		// =========================
 		// TILE RENDER
 		// =========================
 		for (const tile of tiles) {
-			const x = startX + tile.x * tileSize;
-			const y = startY + tile.y * tileSize;
+			const x = startX + tile.x * scale;
+			const y = startY + tile.y * scale;
 
 			this.ctx.strokeStyle = '#ffffff';
 			this.ctx.strokeRect(x, y, tileSize, tileSize);
 
 			this.ctx.fillStyle = '#ffffff';
 
-			const idFontSize = Math.max(10, Math.floor(tileSize * 0.15));
-			const textFontSize = Math.max(9, Math.floor(tileSize * 0.13));
-
 			this.ctx.font = `${idFontSize}px Segoe UI`;
-			this.ctx.fillText(
-				String(tile.id),
-				x + tileSize * 0.08,
-				y + tileSize * 0.20
-			);
+			this.ctx.fillText(String(tile.id), x + tileSize * 0.08, y + tileSize * 0.20);
 
 			this.ctx.font = `${textFontSize}px Segoe UI`;
 			this.ctx.fillText(tile.type, x + tileSize * 0.08, y + tileSize * 0.45);
@@ -115,15 +108,15 @@ export class CanvasRenderer implements Renderer {
 		}
 
 		// =========================
-		// HERO RENDER
+		// HERO RENDER (STATE ONLY)
 		// =========================
 		const heroTile = tiles.find(
 			(tile) => tile.id === this.hero.position
 		);
 
 		if (heroTile) {
-			const heroX = startX + heroTile.x * tileSize + tileSize / 2;
-			const heroY = startY + heroTile.y * tileSize + tileSize / 2;
+			const heroX = startX + heroTile.x * scale + tileSize / 2;
+			const heroY = startY + heroTile.y * scale + tileSize / 2;
 
 			this.ctx.beginPath();
 			this.ctx.arc(

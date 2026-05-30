@@ -1,22 +1,34 @@
 // src/game/main.ts
 
 import { CanvasRenderer } from './renderers/canvas.renderer';
-import { World } from './world/world';
-import { createHero } from './world/hero.factory';
 
-const canvas = document.querySelector('canvas');
-if (!canvas) throw new Error('Canvas not found');
+function bootstrap() {
+	const canvas = document.querySelector('canvas');
 
-const world = new World(createHero());
+	if (!canvas) {
+		throw new Error('Canvas element not found');
+	}
 
-const renderer = new CanvasRenderer();
-renderer.setWorld(world);
+	const renderer = new CanvasRenderer();
 
-renderer.initialize(canvas);
+	// 1. 반드시 먼저 initialize
+	renderer.initialize(canvas);
 
-function loop(time: number) {
-	renderer.render(time);
+	// 2. resize 초기 설정
+	renderer.resize(window.innerWidth, window.innerHeight);
+
+	// 3. resize 대응
+	window.addEventListener('resize', () => {
+		renderer.resize(window.innerWidth, window.innerHeight);
+	});
+
+	// 4. game loop (중요: bind 문제 방지)
+	function loop(time: number) {
+		renderer.render(time);
+		requestAnimationFrame(loop);
+	}
+
 	requestAnimationFrame(loop);
 }
 
-requestAnimationFrame(loop);
+bootstrap();
