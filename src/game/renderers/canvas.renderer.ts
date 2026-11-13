@@ -1,6 +1,7 @@
 // src/game/renderers/canvas.renderer.ts
 
 import { BOARD_CONFIG } from '$config/board.config';
+import { RENDER_CONFIG } from '$config/render.config';
 
 import type { BoardTile } from '../board/board.model';
 import type { Renderer } from '../core/renderer.interface';
@@ -13,6 +14,11 @@ export class CanvasRenderer implements Renderer {
 	private ctx!: CanvasRenderingContext2D;
 
 	private readonly input = new InputManager();
+
+	// 논리 크기(CSS 픽셀)와 화면 배율. 그리기 좌표는 모두 논리 좌표로 계산한다
+	private logicalWidth = 0;
+	private logicalHeight = 0;
+	private pixelRatio = 1;
 
 	private spacePressed = false;
 
@@ -43,10 +49,14 @@ export class CanvasRenderer implements Renderer {
 	}
 
 	public render(_deltaTime: number): void {
+		// 전체 지우기는 변환을 초기화한 물리 픽셀 기준으로 하고, 이후 그리기는 논리 좌표로 한다
+		this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		this.ctx.fillStyle = '#111827';
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+		this.ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
 
 		const session = this.session;
 		if (!session) {
@@ -73,18 +83,28 @@ export class CanvasRenderer implements Renderer {
 		// =========================
 		// BOARD CALC
 		// =========================
-		const availableWidth = this.canvas.width * 0.8;
-		const availableHeight = this.canvas.height * 0.8;
+		// 하단 UI 가 차지하는 높이를 뺀 위쪽 영역(가로는 전체)을 보드 배치 영역으로 쓴다 (최소 1px 보장)
+		const areaWidth = Math.max(1, this.logicalWidth);
+		const areaHeight = Math.max(1, this.logicalHeight - BOARD_CONFIG.BOTTOM_RESERVED_PX);
 
-		const tileSize = Math.floor(
-			Math.min(availableWidth / BOARD_CONFIG.EDGE_COUNT, availableHeight / BOARD_CONFIG.EDGE_COUNT)
+		const availableWidth = areaWidth * 0.8;
+		const availableHeight = areaHeight * 0.8;
+
+		const tileSize = Math.max(
+			1,
+			Math.floor(
+				Math.min(
+					availableWidth / BOARD_CONFIG.EDGE_COUNT,
+					availableHeight / BOARD_CONFIG.EDGE_COUNT
+				)
+			)
 		);
 
 		const boardWidth = BOARD_CONFIG.EDGE_COUNT * tileSize;
 		const boardHeight = BOARD_CONFIG.EDGE_COUNT * tileSize;
 
-		const startX = (this.canvas.width - boardWidth) / 2;
-		const startY = (this.canvas.height - boardHeight) / 2;
+		const startX = (areaWidth - boardWidth) / 2;
+		const startY = (areaHeight - boardHeight) / 2;
 
 		const scale = tileSize / BOARD_CONFIG.TILE_SIZE;
 
@@ -103,10 +123,10 @@ export class CanvasRenderer implements Renderer {
 
 			this.ctx.fillStyle = '#ffffff';
 
-			this.ctx.font = `${idFontSize}px Segoe UI`;
+			this.ctx.font = `${idFontSize}px ${RENDER_CONFIG.FONT_FAMILY}`;
 			this.ctx.fillText(String(tile.id), x + tileSize * 0.08, y + tileSize * 0.2);
 
-			this.ctx.font = `${textFontSize}px Segoe UI`;
+			this.ctx.font = `${textFontSize}px ${RENDER_CONFIG.FONT_FAMILY}`;
 			this.ctx.fillText(tile.type, x + tileSize * 0.08, y + tileSize * 0.45);
 			this.ctx.fillText(tile.name, x + tileSize * 0.08, y + tileSize * 0.7);
 		}
@@ -184,8 +204,15 @@ export class CanvasRenderer implements Renderer {
 	}
 
 	public resize(width: number, height: number): void {
-		this.canvas.width = width;
-		this.canvas.height = height;
+		// 인자는 CSS 픽셀. 배율은 resize 때마다 다시 읽는다 (모니터 이동·확대/축소 대응)
+		this.logicalWidth = width;
+		this.logicalHeight = height;
+		this.pixelRatio = Math.min(window.devicePixelRatio || 1, RENDER_CONFIG.MAX_DEVICE_PIXEL_RATIO);
+
+		// 내부 해상도를 키우면 컨텍스트 상태가 초기화되므로 변환을 다시 적용한다
+		this.canvas.width = Math.floor(width * this.pixelRatio);
+		this.canvas.height = Math.floor(height * this.pixelRatio);
+		this.ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
 	}
 
 	public destroy(): void {
