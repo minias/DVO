@@ -324,9 +324,16 @@ m.ui_turn({ turn: 3 });
 
 # 개발 환경
 
-## 지원 플랫폼
+## 지원 환경
 
-Windows / macOS / Linux 에서 동일하게 동작합니다. GitHub Actions(`.github/workflows/ci.yml`)가 세 OS 에서 같은 검증 게이트를 실행합니다.
+**Windows / macOS / Linux 의 최신 Chrome** 에서 동작하는 것을 목표로 합니다. 웹게임의 실행 환경은 OS 가 아니라 브라우저이므로, CI(`.github/workflows/ci.yml`)는 Linux 한 곳에서 전체 검증 게이트와 Chromium 브라우저 스모크 테스트(`src/routes/page.svelte.test.ts`)를 실행합니다.
+
+OS 에 따라 달라질 수 있는 렌더링 요소는 설정으로 관리합니다 (`src/config/render.config.ts`).
+
+- 캔버스 글꼴: OS 별 한글 폰트 폴백 스택 (`FONT_FAMILY`)
+- 고해상도 화면: `devicePixelRatio` 반영 (`MAX_DEVICE_PIXEL_RATIO`)
+
+개발 환경은 Windows / macOS / Linux 모두 사용할 수 있습니다.
 
 | 항목            | 요구 사항                                                          |
 | --------------- | ------------------------------------------------------------------ |
