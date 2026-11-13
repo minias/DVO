@@ -3,8 +3,5 @@
 export const I18N_CONFIG = {
 	DEFAULT_LOCALE: 'ko',
 
-	SUPPORTED_LOCALES: [
-		'ko',
-		'en'
-	]
+	SUPPORTED_LOCALES: ['ko', 'en']
 } as const;

@@ -17,28 +17,19 @@
 		frameId = requestAnimationFrame(gameLoop);
 	}
 	function resizeCanvas(): void {
-		renderer.resize(
-			window.innerWidth,
-			window.innerHeight
-		);
+		renderer.resize(window.innerWidth, window.innerHeight);
 	}
 	onMount(() => {
 		renderer.initialize(canvas);
 
 		resizeCanvas();
 
-		window.addEventListener(
-			'resize',
-			resizeCanvas
-		);
+		window.addEventListener('resize', resizeCanvas);
 
 		gameLoop();
 
 		return () => {
-			window.removeEventListener(
-				'resize',
-				resizeCanvas
-			);
+			window.removeEventListener('resize', resizeCanvas);
 
 			cancelAnimationFrame(frameId);
 

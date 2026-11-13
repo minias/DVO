@@ -10,7 +10,7 @@ export function createBoard(): BoardTile[] {
 
 	const positions: Array<{ x: number; y: number }> = [];
 	console.log('DEFINITIONS LENGTH:', BOARD_TILE_DEFINITIONS.length);
-	
+
 	// 상단
 	for (let x = 0; x < edge; x++) {
 		positions.push({
@@ -42,7 +42,7 @@ export function createBoard(): BoardTile[] {
 			y
 		});
 	}
- 
+
 	const tiles: BoardTile[] = positions.map((position, index) => {
 		const definition = BOARD_TILE_DEFINITIONS[index];
 		if (BOARD_TILE_DEFINITIONS.length < positions.length) {

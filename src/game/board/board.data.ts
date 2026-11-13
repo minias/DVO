@@ -7,7 +7,6 @@ export interface TileDefinition {
 	name: string;
 }
 export const BOARD_TILE_DEFINITIONS: TileDefinition[] = [
-
 	// =========================
 	// [0~9] TOP (10)
 	// =========================
