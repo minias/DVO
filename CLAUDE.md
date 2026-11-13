@@ -63,7 +63,7 @@ The main orchestrator session MUST run on **Sonnet** and delegate specialized ta
    - 작업 브랜치 `feat/*`, `fix/*`, `chore/*`, `docs/*` 는 `dev` 에서 분기해 `dev` 로 PR. 문서·설정 등 사소한 변경은 `dev` 직접 커밋 가능. 마일스톤 완료 시 `dev → main` PR.
    - 커밋은 Conventional Commits + 한국어 메시지. `git add -A` 금지, 파일 명시 스테이징.
    - 커밋 전 체크: git 이메일이 `gnuhacker@gmail.com`, 검증 게이트 통과, `.env`/`*.db`/`node_modules`/`docs/IA.md` 미포함.
-   - 푸시·PR 생성·태그 푸시·원격 브랜치 생성은 마일스톤마다 사용자 확인 후에만 한다. `gh` 가 샌드박스에서 막히면 사용자에게 `! gh pr create ...` 명령을 제시한다.
+   - 푸시와 PR 생성은 `git-workflow` 가 사용자 확인 없이 진행한다. 단 `main` 으로의 병합, 태그 푸시, force push, 원격 브랜치 삭제는 사용자 승인 후에만 한다. 병합은 항상 사용자가 승인한다. `gh` 가 샌드박스에서 막히면 사용자에게 `! gh pr create ...` 명령을 제시한다.
 
 ---
 

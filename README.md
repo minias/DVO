@@ -14,18 +14,19 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ## 현재 상태 (v0.0.1)
 
-| 영역                             | 상태                                |
-| -------------------------------- | ----------------------------------- |
-| 보드 생성 (10×10 외곽 36칸)      | ✅ 구현                             |
-| 캔버스 렌더링 (타일·영웅)        | ✅ 구현                             |
-| 키보드 입력 매니저               | ✅ 구현 (이동 연결은 미완)          |
-| 설정 파일 (board/dice/game/i18n) | ✅ 구현                             |
-| 다국어 기반 (paraglide, ko/en)   | 🔧 기반만 구성 (메시지는 샘플 상태) |
-| 주사위 굴리기 로직               | ⬜ 설정만 있음, 서비스 미구현       |
-| 상태창 (HP/MP/GOLD)              | ⬜ 미구현                           |
-| 이벤트·전투 타일 동작            | ⬜ 타일 종류만 정의                 |
-| 테스트                           | ⬜ 없음                             |
-| 백엔드 / DB / Redis              | ⬜ 계획 단계                        |
+| 영역                                    | 상태                                              |
+| --------------------------------------- | ------------------------------------------------- |
+| 보드 생성 (10×10 외곽 36칸)             | ✅ 구현                                           |
+| 캔버스 렌더링 (타일·영웅)               | ✅ 구현                                           |
+| 키보드 입력 매니저 (Space = 굴리기)     | ✅ 구현                                           |
+| 설정 파일 (board/dice/game/i18n/player) | ✅ 구현                                           |
+| 다국어 기반 (paraglide, ko/en)          | 🔧 기반 + UI 문구 키 구성, 언어 전환 UI 는 미구현 |
+| 주사위 굴리기 로직                      | ✅ 구현 (M1)                                      |
+| 턴·이동 상태, 이동 연출                 | ✅ 구현 (M2, 브라우저 확인 필요)                  |
+| 상태창 (HP/MP/GOLD)                     | ✅ 구현 (M3, 표시만. 변화 규칙은 M5)              |
+| 이벤트·전투 타일 동작                   | ⬜ 타일 종류만 정의                               |
+| 테스트                                  | 🔧 순수 로직 단위 테스트 20개                     |
+| 백엔드 / DB / Redis                     | ⬜ 계획 단계                                      |
 
 ---
 
@@ -232,18 +233,29 @@ DVO
 
 ## 번역 키 규칙
 
+Paraglide 는 메시지 키를 JS 함수 이름으로 만들기 때문에 점(`.`) 대신 snake_case 를 사용합니다.
+
 ```text
-ui.*  action.*  board.*  monster.*  item.*  quest.*  npc.*  system.*
+ui_*  action_*  board_*  monster_*  item_*  quest_*  npc_*  system_*
 ```
 
 예시
 
 ```text
-ui.title
-action.rollDice
-board.start
-monster.slime.name
-item.potion.name
+ui_title
+action_roll_dice
+board_start
+monster_slime_name
+item_potion_name
+```
+
+사용 방법
+
+```typescript
+import { m } from '$lib/paraglide/messages';
+
+m.action_roll_dice();
+m.ui_turn({ turn: 3 });
 ```
 
 ---
@@ -312,9 +324,16 @@ item.potion.name
 
 # 개발 환경
 
-## 지원 플랫폼
+## 지원 환경
 
-Windows / macOS / Linux 에서 동일하게 동작합니다. GitHub Actions(`.github/workflows/ci.yml`)가 세 OS 에서 같은 검증 게이트를 실행합니다.
+**Windows / macOS / Linux 의 최신 Chrome** 에서 동작하는 것을 목표로 합니다. 웹게임의 실행 환경은 OS 가 아니라 브라우저이므로, CI(`.github/workflows/ci.yml`)는 Linux 한 곳에서 전체 검증 게이트와 Chromium 브라우저 스모크 테스트(`src/routes/page.svelte.test.ts`)를 실행합니다.
+
+OS 에 따라 달라질 수 있는 렌더링 요소는 설정으로 관리합니다 (`src/config/render.config.ts`).
+
+- 캔버스 글꼴: OS 별 한글 폰트 폴백 스택 (`FONT_FAMILY`)
+- 고해상도 화면: `devicePixelRatio` 반영 (`MAX_DEVICE_PIXEL_RATIO`)
+
+개발 환경은 Windows / macOS / Linux 모두 사용할 수 있습니다.
 
 | 항목            | 요구 사항                                                          |
 | --------------- | ------------------------------------------------------------------ |
@@ -347,9 +366,9 @@ npm run verify     # check → lint → test → build 전체 게이트
 
 - 보드 렌더링 ✅
 - 플레이어 렌더링 ✅
-- 주사위 굴리기 ⬜
-- 이동 ⬜
-- 상태창 ⬜
+- 주사위 굴리기 ✅
+- 이동 ✅
+- 상태창 ✅
 - 다국어 전환 ⬜
 
 완료 기준

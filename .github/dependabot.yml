@@ -1,0 +1,35 @@
+# 의존성 업데이트 봇: 매주 월요일에 업데이트 PR 을 dev 로 만든다
+# (취약점 보안 업데이트는 저장소 설정의 Dependabot security updates 가 별도로 처리한다)
+version: 2
+
+updates:
+  # npm 패키지
+  - package-ecosystem: npm
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 5
+    labels: [dependencies]
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      # minor/patch 는 한 PR 로 묶어 PR 수를 줄인다. major 는 영향이 크므로 개별 PR 로 만든다
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  # GitHub Actions 버전
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Seoul
+    labels: [dependencies]
+    commit-message:
+      prefix: 'chore(ci)'

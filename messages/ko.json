@@ -1,4 +1,14 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from ko!"
+	"hello_world": "Hello, {name} from ko!",
+	"ui_title": "DiceVerse Online",
+	"ui_turn": "턴 {turn}",
+	"ui_last_roll": "주사위 결과: {values} = {total}",
+	"ui_last_roll_none": "아직 주사위를 굴리지 않았습니다",
+	"ui_moving": "이동 중...",
+	"action_roll_dice": "주사위 굴리기",
+	"ui_hp": "HP {current}/{max}",
+	"ui_mp": "MP {current}/{max}",
+	"ui_gold": "골드 {amount}",
+	"ui_status": "상태"
 }

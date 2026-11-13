@@ -5,6 +5,10 @@
 
 	import { CanvasRenderer } from '$game/renderers/canvas.renderer';
 
+	import type { GameSession } from '$game/session/game.svelte';
+
+	let { session }: { session: GameSession } = $props();
+
 	let canvas: HTMLCanvasElement;
 
 	let frameId = 0;
@@ -20,6 +24,7 @@
 		renderer.resize(window.innerWidth, window.innerHeight);
 	}
 	onMount(() => {
+		renderer.bind(session);
 		renderer.initialize(canvas);
 
 		resizeCanvas();
