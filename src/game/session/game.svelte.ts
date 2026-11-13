@@ -4,6 +4,8 @@ import { createBoard } from '../board/board.generator';
 import type { BoardTile } from '../board/board.model';
 import { rollDice } from '../dice/dice.service';
 import type { DiceResult, RandomSource } from '../dice/dice.model';
+import type { PlayerStats } from '../player/player.model';
+import { createInitialStats } from '../player/player.logic';
 import type { GameEvent, MoveResult, TurnPhase } from './session.model';
 import { calculateMove } from './turn.logic';
 
@@ -21,6 +23,9 @@ export class GameSession {
 
 	// 현재 턴 번호
 	turn = $state(1);
+
+	// 플레이어 능력치 (HP/MP/골드). 변경은 player.logic 의 순수 함수 결과로 통째로 교체한다.
+	stats = $state<PlayerStats>(createInitialStats());
 
 	// 마지막 주사위 결과 (아직 굴리지 않았으면 null)
 	lastRoll = $state<DiceResult | null>(null);

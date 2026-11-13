@@ -6,5 +6,9 @@
 	"ui_last_roll": "Rolled: {values} = {total}",
 	"ui_last_roll_none": "You haven't rolled yet",
 	"ui_moving": "Moving...",
-	"action_roll_dice": "Roll Dice"
+	"action_roll_dice": "Roll Dice",
+	"ui_hp": "HP {current}/{max}",
+	"ui_mp": "MP {current}/{max}",
+	"ui_gold": "Gold {amount}",
+	"ui_status": "Status"
 }

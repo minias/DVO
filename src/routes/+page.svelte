@@ -5,6 +5,7 @@
 	import GameCanvas from '$lib/game/GameCanvas.svelte';
 	import ActionBar from '$lib/action/ActionBar.svelte';
 	import TurnStatus from '$lib/player/TurnStatus.svelte';
+	import StatusBar from '$lib/player/StatusBar.svelte';
 
 	const session = createGameSession();
 </script>
@@ -16,5 +17,6 @@
 	class="pointer-events-none fixed inset-x-0 bottom-0 flex flex-col gap-3 bg-slate-900/70 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur"
 >
 	<TurnStatus {session} />
+	<StatusBar {session} />
 	<ActionBar {session} />
 </div>
