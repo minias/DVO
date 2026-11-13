@@ -9,7 +9,6 @@ export function createBoard(): BoardTile[] {
 	const edge = BOARD_CONFIG.EDGE_COUNT;
 
 	const positions: Array<{ x: number; y: number }> = [];
-	console.log('DEFINITIONS LENGTH:', BOARD_TILE_DEFINITIONS.length);
 
 	// 상단
 	for (let x = 0; x < edge; x++) {
