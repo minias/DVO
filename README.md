@@ -232,18 +232,29 @@ DVO
 
 ## 번역 키 규칙
 
+Paraglide 는 메시지 키를 JS 함수 이름으로 만들기 때문에 점(`.`) 대신 snake_case 를 사용합니다.
+
 ```text
-ui.*  action.*  board.*  monster.*  item.*  quest.*  npc.*  system.*
+ui_*  action_*  board_*  monster_*  item_*  quest_*  npc_*  system_*
 ```
 
 예시
 
 ```text
-ui.title
-action.rollDice
-board.start
-monster.slime.name
-item.potion.name
+ui_title
+action_roll_dice
+board_start
+monster_slime_name
+item_potion_name
+```
+
+사용 방법
+
+```typescript
+import { m } from '$lib/paraglide/messages';
+
+m.action_roll_dice();
+m.ui_turn({ turn: 3 });
 ```
 
 ---
