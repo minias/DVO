@@ -11,6 +11,8 @@ export default defineConfig({
 		paraglideVitePlugin({ project: './project.inlang', outdir: './src/lib/paraglide' })
 	],
 	test: {
+		// 아직 브라우저(client) 테스트가 없는 상태에서도 게이트가 통과하도록 한다
+		passWithNoTests: true,
 		expect: { requireAssertions: true },
 		projects: [
 			{

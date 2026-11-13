@@ -14,18 +14,18 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ## 현재 상태 (v0.0.1)
 
-| 영역 | 상태 |
-| --- | --- |
-| 보드 생성 (10×10 외곽 36칸) | ✅ 구현 |
-| 캔버스 렌더링 (타일·영웅) | ✅ 구현 |
-| 키보드 입력 매니저 | ✅ 구현 (이동 연결은 미완) |
-| 설정 파일 (board/dice/game/i18n) | ✅ 구현 |
-| 다국어 기반 (paraglide, ko/en) | 🔧 기반만 구성 (메시지는 샘플 상태) |
-| 주사위 굴리기 로직 | ⬜ 설정만 있음, 서비스 미구현 |
-| 상태창 (HP/MP/GOLD) | ⬜ 미구현 |
-| 이벤트·전투 타일 동작 | ⬜ 타일 종류만 정의 |
-| 테스트 | ⬜ 없음 |
-| 백엔드 / DB / Redis | ⬜ 계획 단계 |
+| 영역                             | 상태                                |
+| -------------------------------- | ----------------------------------- |
+| 보드 생성 (10×10 외곽 36칸)      | ✅ 구현                             |
+| 캔버스 렌더링 (타일·영웅)        | ✅ 구현                             |
+| 키보드 입력 매니저               | ✅ 구현 (이동 연결은 미완)          |
+| 설정 파일 (board/dice/game/i18n) | ✅ 구현                             |
+| 다국어 기반 (paraglide, ko/en)   | 🔧 기반만 구성 (메시지는 샘플 상태) |
+| 주사위 굴리기 로직               | ⬜ 설정만 있음, 서비스 미구현       |
+| 상태창 (HP/MP/GOLD)              | ⬜ 미구현                           |
+| 이벤트·전투 타일 동작            | ⬜ 타일 종류만 정의                 |
+| 테스트                           | ⬜ 없음                             |
+| 백엔드 / DB / Redis              | ⬜ 계획 단계                        |
 
 ---
 
@@ -33,18 +33,18 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ### 기존 MMORPG
 
-* 실시간 이동
-* 실시간 전투
-* 높은 서버 부하
-* 복잡한 동기화
+- 실시간 이동
+- 실시간 전투
+- 높은 서버 부하
+- 복잡한 동기화
 
 ### DiceVerse Online
 
-* 주사위 기반 턴 진행
-* 보드 이동
-* 이벤트 중심 게임 플레이
-* 낮은 서버 부하
-* 모바일/웹 친화적
+- 주사위 기반 턴 진행
+- 보드 이동
+- 이벤트 중심 게임 플레이
+- 낮은 서버 부하
+- 모바일/웹 친화적
 
 ---
 
@@ -52,22 +52,22 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ### 포함
 
-* 보드 맵
-* 플레이어 이동
-* 주사위 시스템
-* 상태창
-* 이벤트 타일
-* 다국어 지원
-* 반응형 웹 UI
+- 보드 맵
+- 플레이어 이동
+- 주사위 시스템
+- 상태창
+- 이벤트 타일
+- 다국어 지원
+- 반응형 웹 UI
 
 ### 제외
 
-* 로그인
-* 길드
-* 거래소
-* PvP
-* WebSocket
-* 실시간 멀티플레이
+- 로그인
+- 길드
+- 거래소
+- PvP
+- WebSocket
+- 실시간 멀티플레이
 
 ---
 
@@ -75,26 +75,26 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ## Frontend (현재)
 
-* SvelteKit 2 / Svelte 5 (Runes)
-* TypeScript
-* Tailwind CSS 4
-* Paraglide (다국어, `@inlang/paraglide-js`)
-* Canvas 2D 렌더링
-* Vite 8 / Vitest / ESLint / Prettier
+- SvelteKit 2 / Svelte 5 (Runes)
+- TypeScript
+- Tailwind CSS 4
+- Paraglide (다국어, `@inlang/paraglide-js`)
+- Canvas 2D 렌더링
+- Vite 8 / Vitest / ESLint / Prettier
 
 ## Backend (향후)
 
-* Golang
-* REST API
-* WebSocket
+- Golang
+- REST API
+- WebSocket
 
 ## Database (향후)
 
-* MariaDB
+- MariaDB
 
 ## Cache (향후)
 
-* Redis
+- Redis
 
 ---
 
@@ -140,21 +140,21 @@ DVO
 
 ## GAME_CONFIG
 
-* 앱 이름, 버전, 디버그 여부
+- 앱 이름, 버전, 디버그 여부
 
 ## BOARD_CONFIG
 
-* 타일 크기(`TILE_SIZE`), 오프셋, 한 변의 타일 수(`EDGE_COUNT`), 그리드 표시 여부
-* 현재 `EDGE_COUNT = 10` → 외곽 36칸 (`4 × (10 - 1)`)
-* 타일 종류와 이름은 `src/game/board/board.data.ts` 에서 데이터로 관리
+- 타일 크기(`TILE_SIZE`), 오프셋, 한 변의 타일 수(`EDGE_COUNT`), 그리드 표시 여부
+- 현재 `EDGE_COUNT = 10` → 외곽 36칸 (`4 × (10 - 1)`)
+- 타일 종류와 이름은 `src/game/board/board.data.ts` 에서 데이터로 관리
 
 ## DICE_CONFIG
 
-* 기본 주사위 개수(`DEFAULT_COUNT`), 최소값(`MIN`), 최대값(`MAX`)
+- 기본 주사위 개수(`DEFAULT_COUNT`), 최소값(`MIN`), 최대값(`MAX`)
 
 ## I18N_CONFIG
 
-* 기본 언어(`ko`), 지원 언어 목록(`ko`, `en`)
+- 기본 언어(`ko`), 지원 언어 목록(`ko`, `en`)
 
 ---
 
@@ -217,18 +217,18 @@ DVO
 
 ### 현재
 
-* 한국어 (기본)
-* 영어
+- 한국어 (기본)
+- 영어
 
 ### 향후
 
-* 일본어
-* 중국어 간체
-* 중국어 번체
+- 일본어
+- 중국어 간체
+- 중국어 번체
 
 ## 번역 라이브러리
 
-* Paraglide (`@inlang/paraglide-js`) — 메시지는 `messages/{locale}.json`
+- Paraglide (`@inlang/paraglide-js`) — 메시지는 `messages/{locale}.json`
 
 ## 번역 키 규칙
 
@@ -278,9 +278,9 @@ item.potion.name
 
 ```json
 {
-  "id": 1,
-  "type": "monster",
-  "monsterId": "slime"
+	"id": 1,
+	"type": "monster",
+	"monsterId": "slime"
 }
 ```
 
@@ -291,13 +291,13 @@ item.potion.name
 금지
 
 ```typescript
-'공격'
+'공격';
 ```
 
 허용
 
 ```typescript
-'action.attack'
+'action.attack';
 ```
 
 ## 4. Svelte 5 Runes Only
@@ -312,13 +312,29 @@ item.potion.name
 
 # 개발 환경
 
+## 지원 플랫폼
+
+Windows / macOS / Linux 에서 동일하게 동작합니다. GitHub Actions(`.github/workflows/ci.yml`)가 세 OS 에서 같은 검증 게이트를 실행합니다.
+
+| 항목            | 요구 사항                                                          |
+| --------------- | ------------------------------------------------------------------ |
+| Node.js         | `^20.19` / `^22.13` / `>=24` (권장 22, `.nvmrc`)                   |
+| 줄바꿈          | 저장소는 LF 로 통일 (`.gitattributes`, `.editorconfig`)            |
+| 파일 경로       | 항상 `/` 와 상대 경로·별칭(`$game`, `$config`) 사용, 대소문자 일치 |
+| 브라우저 테스트 | 최초 1회 `npx playwright install chromium`                         |
+
+> `DVO-CreateFolders.ps1` 은 초기 폴더 생성용 Windows 전용 스크립트이며 현재 구조에는 필요하지 않습니다.
+
+## 명령어
+
 ```bash
-npm install
+npm install        # 의존성 설치 (CI 에서는 npm ci)
 npm run dev        # 개발 서버 (http://localhost:5173)
 npm run check      # 타입 검사 (svelte-check)
 npm run build      # 프로덕션 빌드
 npm run lint       # prettier + eslint
 npm test           # 단위 테스트 (vitest)
+npm run verify     # check → lint → test → build 전체 게이트
 ```
 
 ---
@@ -329,12 +345,12 @@ npm test           # 단위 테스트 (vitest)
 
 구현 목표
 
-* 보드 렌더링 ✅
-* 플레이어 렌더링 ✅
-* 주사위 굴리기 ⬜
-* 이동 ⬜
-* 상태창 ⬜
-* 다국어 전환 ⬜
+- 보드 렌더링 ✅
+- 플레이어 렌더링 ✅
+- 주사위 굴리기 ⬜
+- 이동 ⬜
+- 상태창 ⬜
+- 다국어 전환 ⬜
 
 완료 기준
 

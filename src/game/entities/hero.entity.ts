@@ -1,6 +1,6 @@
 // src/game/entities/hero.entity.ts
 
-export interface HeroEntity {	
+export interface HeroEntity {
 	id: string;
 	name: string;
 
@@ -11,5 +11,5 @@ export interface HeroEntity {
 	h: number;
 
 	vx: number;
-	vy: number;    
+	vy: number;
 }

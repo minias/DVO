@@ -70,10 +70,7 @@ export class CanvasRenderer implements Renderer {
 		const availableHeight = this.canvas.height * 0.8;
 
 		const tileSize = Math.floor(
-			Math.min(
-				availableWidth / BOARD_CONFIG.EDGE_COUNT,
-				availableHeight / BOARD_CONFIG.EDGE_COUNT
-			)
+			Math.min(availableWidth / BOARD_CONFIG.EDGE_COUNT, availableHeight / BOARD_CONFIG.EDGE_COUNT)
 		);
 
 		const boardWidth = BOARD_CONFIG.EDGE_COUNT * tileSize;
@@ -100,32 +97,24 @@ export class CanvasRenderer implements Renderer {
 			this.ctx.fillStyle = '#ffffff';
 
 			this.ctx.font = `${idFontSize}px Segoe UI`;
-			this.ctx.fillText(String(tile.id), x + tileSize * 0.08, y + tileSize * 0.20);
+			this.ctx.fillText(String(tile.id), x + tileSize * 0.08, y + tileSize * 0.2);
 
 			this.ctx.font = `${textFontSize}px Segoe UI`;
 			this.ctx.fillText(tile.type, x + tileSize * 0.08, y + tileSize * 0.45);
-			this.ctx.fillText(tile.name, x + tileSize * 0.08, y + tileSize * 0.70);
+			this.ctx.fillText(tile.name, x + tileSize * 0.08, y + tileSize * 0.7);
 		}
 
 		// =========================
 		// HERO RENDER (STATE ONLY)
 		// =========================
-		const heroTile = tiles.find(
-			(tile) => tile.id === this.hero.position
-		);
+		const heroTile = tiles.find((tile) => tile.id === this.hero.position);
 
 		if (heroTile) {
 			const heroX = startX + heroTile.x * scale + tileSize / 2;
 			const heroY = startY + heroTile.y * scale + tileSize / 2;
 
 			this.ctx.beginPath();
-			this.ctx.arc(
-				heroX,
-				heroY,
-				Math.max(8, tileSize * 0.18),
-				0,
-				Math.PI * 2
-			);
+			this.ctx.arc(heroX, heroY, Math.max(8, tileSize * 0.18), 0, Math.PI * 2);
 
 			this.ctx.fillStyle = '#3b82f6';
 			this.ctx.fill();
