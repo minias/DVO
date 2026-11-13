@@ -12,6 +12,23 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 ---
 
+## 현재 상태 (v0.0.1)
+
+| 영역 | 상태 |
+| --- | --- |
+| 보드 생성 (10×10 외곽 36칸) | ✅ 구현 |
+| 캔버스 렌더링 (타일·영웅) | ✅ 구현 |
+| 키보드 입력 매니저 | ✅ 구현 (이동 연결은 미완) |
+| 설정 파일 (board/dice/game/i18n) | ✅ 구현 |
+| 다국어 기반 (paraglide, ko/en) | 🔧 기반만 구성 (메시지는 샘플 상태) |
+| 주사위 굴리기 로직 | ⬜ 설정만 있음, 서비스 미구현 |
+| 상태창 (HP/MP/GOLD) | ⬜ 미구현 |
+| 이벤트·전투 타일 동작 | ⬜ 타일 종류만 정의 |
+| 테스트 | ⬜ 없음 |
+| 백엔드 / DB / Redis | ⬜ 계획 단계 |
+
+---
+
 ## 핵심 컨셉
 
 ### 기존 MMORPG
@@ -56,11 +73,14 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 
 # 기술 스택
 
-## Frontend
+## Frontend (현재)
 
-* SvelteKit
+* SvelteKit 2 / Svelte 5 (Runes)
 * TypeScript
-* paraglide
+* Tailwind CSS 4
+* Paraglide (다국어, `@inlang/paraglide-js`)
+* Canvas 2D 렌더링
+* Vite 8 / Vitest / ESLint / Prettier
 
 ## Backend (향후)
 
@@ -68,11 +88,11 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 * REST API
 * WebSocket
 
-## Database
+## Database (향후)
 
 * MariaDB
 
-## Cache
+## Cache (향후)
 
 * Redis
 
@@ -81,103 +101,60 @@ DiceVerse Online은 전통적인 실시간 MMORPG가 아닌, **주사위 기반 
 # 프로젝트 구조
 
 ```text
-diceverse-online
-├─lib
-│   ├── components
-│   ├── paraglide
-│   │   └── messages
-│   ├── board
-│   │   ├── Board.svelte
-│   │   ├── Tile.svelte
-│   │   └── Hero.svelte
-│   ├── game
-│   │
-│   ├── player
-│   │   ├── StatusBar.svelte
-│   │   └── PlayerCard.svelte
-│   │
-│   ├── action
-│   │   ├── ActionBar.svelte
-│   │   └── DiceButton.svelte
-│   │
-│   └── layout
-│       ├── Header.svelte
-│       └── Footer.svelte
-├─routes
-├─config
-│   ├── game.config.ts
-│   ├── board.config.ts
-│   └── dice.config.ts
-├─game
-│  ├─core
-│  ├─renderers
-│  ├─board
-│  ├─entities
-│  ├─input
-│  └─world
-├─types
-│   ├── game.type.ts
-│   ├── board.type.ts
-│   └── player.type.ts
-├─stores
-│   ├── game.store.ts
-│   ├── player.store.ts
-│   └── board.store.ts
-├── services
-│   ├── dice.service.ts
-│   └── board.service.ts
-│
-├── routes
-│   └── +page.svelte
-│
-└── app.html
+DVO
+├─ messages/                 # 다국어 메시지 (ko.json, en.json)
+├─ project.inlang/           # paraglide 설정
+├─ static/
+├─ docs/                     # 문서, 이미지
+└─ src/
+   ├─ app.html
+   ├─ hooks.ts / hooks.server.ts   # paraglide 라우팅 훅
+   ├─ config/                # 모든 수치 설정 (Config First)
+   │   ├─ game.config.ts
+   │   ├─ board.config.ts
+   │   ├─ dice.config.ts
+   │   └─ i18n.config.ts
+   ├─ game/                  # 프레임워크 비의존 게임 로직
+   │   ├─ main.ts
+   │   ├─ core/              # 렌더러 인터페이스
+   │   ├─ board/             # 보드 모델 / 타일 데이터 / 생성기
+   │   ├─ entities/          # 영웅 등 엔티티
+   │   ├─ input/             # 키보드 입력 매니저
+   │   ├─ renderers/         # Canvas 렌더러
+   │   └─ world/             # 월드 상태, 영웅 팩토리
+   ├─ lib/
+   │   └─ game/GameCanvas.svelte   # 캔버스 마운트 컴포넌트
+   └─ routes/
+       ├─ +layout.svelte
+       ├─ +page.svelte
+       └─ layout.css
 ```
+
+경로 별칭: `$config` → `src/config`, `$game` → `src/game`, `$lib` → `src/lib`
+
+> 향후 추가 예정: `lib/player`(상태창), `lib/action`(주사위 버튼), `lib/layout`, 서비스(`dice`, `board`), 상태 관리(Svelte 5 Runes 기반).
 
 ---
 
 # 게임 설정
 
-## GameConfig
+## GAME_CONFIG
 
-```typescript
-GAME_CONFIG
-```
+* 앱 이름, 버전, 디버그 여부
 
-담당 항목
+## BOARD_CONFIG
 
-* 게임명
-* 버전
-* 언어 설정
-* 환경 설정
+* 타일 크기(`TILE_SIZE`), 오프셋, 한 변의 타일 수(`EDGE_COUNT`), 그리드 표시 여부
+* 현재 `EDGE_COUNT = 10` → 외곽 36칸 (`4 × (10 - 1)`)
+* 타일 종류와 이름은 `src/game/board/board.data.ts` 에서 데이터로 관리
 
----
+## DICE_CONFIG
 
-## BoardConfig
+* 기본 주사위 개수(`DEFAULT_COUNT`), 최소값(`MIN`), 최대값(`MAX`)
 
-```typescript
-BOARD_CONFIG
-```
+## I18N_CONFIG
 
-담당 항목
-
-* 보드 크기
-* 타일 개수
-* 맵 테마
-
----
-
-## DiceConfig
-
-```typescript
-DICE_CONFIG
-```
-
-담당 항목
-
-* 기본 주사위 개수
-* 최소값
-* 최대값
-* 면 수
+* 기본 언어(`ko`), 지원 언어 목록(`ko`, `en`)
 
 ---
 
@@ -187,8 +164,9 @@ DICE_CONFIG
 
 ```typescript
 {
-    count: 2,
-    sides: 6
+    DEFAULT_COUNT: 2,
+    MIN: 1,
+    MAX: 6
 }
 ```
 
@@ -198,22 +176,38 @@ DICE_CONFIG
 3 + 5 = 8
 ```
 
-향후
-
-```typescript
-{
-    count: 4,
-    sides: 6
-}
-```
-
-결과 예시
+향후 (4개)
 
 ```text
 2 + 6 + 4 + 1 = 13
 ```
 
 코드 수정 없이 설정만 변경 가능해야 한다.
+
+---
+
+# 보드
+
+## 타일 종류
+
+`START`, `CITY`, `EVENT`, `BATTLE`, `BOSS`, `JAIL`
+
+## 형태 (10×10 외곽, 36칸)
+
+한 변에 10칸이며, 모서리 칸은 인접한 두 변이 공유합니다.
+
+```text
+01 02 03 04 05 06 07 08 09 10
+36                         11
+35                         12
+34                         13
+33                         14
+32                         15
+31                         16
+30                         17
+29                         18
+28 27 26 25 24 23 22 21 20 19
+```
 
 ---
 
@@ -232,45 +226,23 @@ DICE_CONFIG
 * 중국어 간체
 * 중국어 번체
 
----
-
 ## 번역 라이브러리
 
-* svelte-i18n
-
----
+* Paraglide (`@inlang/paraglide-js`) — 메시지는 `messages/{locale}.json`
 
 ## 번역 키 규칙
 
 ```text
-ui.*
-
-action.*
-
-board.*
-
-monster.*
-
-item.*
-
-quest.*
-
-npc.*
-
-system.*
+ui.*  action.*  board.*  monster.*  item.*  quest.*  npc.*  system.*
 ```
 
 예시
 
 ```text
 ui.title
-
 action.rollDice
-
 board.start
-
 monster.slime.name
-
 item.potion.name
 ```
 
@@ -294,44 +266,15 @@ item.potion.name
 
 ---
 
-# 보드 형태
-
-초기 MVP
-
-```text
-01 02 03 04 05 06 07 08
-32                   09
-31                   10
-30                   11
-29                   12
-28 27 26 25 24 23 22 13
-```
-
----
-
 # 개발 원칙
 
 ## 1. Config First
 
-모든 수치는 Config에서 관리한다.
-
-예시
-
-* HP
-* MP
-* GOLD
-* Dice Count
-* Board Size
-* Experience
-* Monster Stats
-
----
+모든 수치는 `src/config` 에서 관리한다. (HP, MP, GOLD, 주사위 개수, 보드 크기, 경험치, 몬스터 능력치 등)
 
 ## 2. Data Driven
 
 게임 로직은 데이터 중심으로 설계한다.
-
-예시
 
 ```json
 {
@@ -341,11 +284,9 @@ item.potion.name
 }
 ```
 
----
-
 ## 3. Translation Key Only
 
-화면에 직접 문자열을 사용하지 않는다.
+화면에 직접 문자열을 사용하지 않는다. (현재 `board.data.ts` 의 타일 이름은 임시 하드코딩 → 번역 키로 이전 예정)
 
 금지
 
@@ -359,58 +300,25 @@ item.potion.name
 'action.attack'
 ```
 
----
+## 4. Svelte 5 Runes Only
 
-## 4. Future MMORPG Ready
+상태는 `$state`, `$derived`, `$effect` 로 관리하고, Svelte 4 스토어는 사용하지 않는다.
 
-향후 추가 예정
+## 5. Future MMORPG Ready
 
-* 로그인
-* WebSocket
-* 멀티플레이
-* 파티
-* 길드
-* 거래소
-* PvP
-* 시즌 시스템
+향후 추가 예정: 로그인, WebSocket, 멀티플레이, 파티, 길드, 거래소, PvP, 시즌 시스템
 
 ---
 
-# 프로젝트 생성
+# 개발 환경
 
 ```bash
-npm create svelte@latest diceverse-online
-```
-
-선택
-
-```text
-Skeleton Project
-TypeScript
-ESLint
-Prettier
-```
-
-설치
-
-```bash
-cd diceverse-online
-
 npm install
-
-npm install svelte-i18n
-```
-
-실행
-
-```bash
-npm run dev
-```
-
-접속
-
-```text
-http://localhost:5173
+npm run dev        # 개발 서버 (http://localhost:5173)
+npm run check      # 타입 검사 (svelte-check)
+npm run build      # 프로덕션 빌드
+npm run lint       # prettier + eslint
+npm test           # 단위 테스트 (vitest)
 ```
 
 ---
@@ -421,12 +329,12 @@ http://localhost:5173
 
 구현 목표
 
-* 보드 렌더링
-* 플레이어 렌더링
-* 주사위 굴리기
-* 이동
-* 상태창
-* 다국어 전환
+* 보드 렌더링 ✅
+* 플레이어 렌더링 ✅
+* 주사위 굴리기 ⬜
+* 이동 ⬜
+* 상태창 ⬜
+* 다국어 전환 ⬜
 
 완료 기준
 

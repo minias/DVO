@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 # Paraglide
 src/lib/paraglide
 project.inlang/cache/
+
+# 문서 (tree 덤프, 대용량)
+docs/IA.md
