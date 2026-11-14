@@ -27,3 +27,6 @@ project.inlang/cache/
 
 # 문서 (tree 덤프, 대용량)
 docs/IA.md
+
+# Claude Code 로컬 설정·에이전트 정의 (공개 저장소에 노출하지 않음)
+.claude/
