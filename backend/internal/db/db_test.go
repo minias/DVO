@@ -13,7 +13,7 @@ func TestMigrateSeedsStaticData(t *testing.T) {
 	}
 	defer conn.Close()
 
-	for i := 0; i < 2; i++ { // 두 번째 호출은 아무 일도 하지 않아야 한다
+	for i := range 2 { // 두 번째 호출은 아무 일도 하지 않아야 한다
 		if err := Migrate(conn); err != nil {
 			t.Fatalf("마이그레이션 %d회차 실패: %v", i+1, err)
 		}
