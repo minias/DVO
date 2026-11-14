@@ -21,11 +21,11 @@ func TestMigrateSeedsStaticData(t *testing.T) {
 
 	var version int
 	conn.QueryRow("PRAGMA user_version").Scan(&version)
-	if version != 2 {
-		t.Errorf("user_version = %d, 기대값 2", version)
+	if version != 3 {
+		t.Errorf("user_version = %d, 기대값 3", version)
 	}
 
-	counts := map[string]int{"tile_def": 36, "foe": 2, "rule": 25}
+	counts := map[string]int{"tile_def": 36, "foe": 2, "rule": 26, "item": 3}
 	for table, want := range counts {
 		var got int
 		if err := conn.QueryRow("SELECT COUNT(*) FROM " + table).Scan(&got); err != nil {

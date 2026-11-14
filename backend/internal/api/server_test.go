@@ -37,11 +37,11 @@ func TestConfigReturnsSeededData(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &cfg); err != nil {
 		t.Fatal(err)
 	}
-	if len(cfg.Tiles) != 36 || len(cfg.Foes) != 2 || len(cfg.Rules) != 25 {
-		t.Errorf("타일 %d, foe %d, rule %d (기대값 36, 2, 25)", len(cfg.Tiles), len(cfg.Foes), len(cfg.Rules))
+	if len(cfg.Tiles) != 36 || len(cfg.Foes) != 2 || len(cfg.Rules) != 26 {
+		t.Errorf("타일 %d, foe %d, rule %d (기대값 36, 2, 26)", len(cfg.Tiles), len(cfg.Foes), len(cfg.Rules))
 	}
-	if cfg.Items == nil {
-		t.Error("items 는 null 이 아니라 빈 배열이어야 한다")
+	if len(cfg.Items) != 3 {
+		t.Errorf("아이템 %d종, 기대값 3종", len(cfg.Items))
 	}
 	if cfg.Rules["jail_fine"] != 30 {
 		t.Errorf("jail_fine = %v, 기대값 30", cfg.Rules["jail_fine"])
