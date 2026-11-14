@@ -4,58 +4,58 @@ import type { TileType } from './board.model';
 
 export interface TileDefinition {
 	type: TileType;
-	name: string;
+	nameKey: string; // 번역 키(messages/*.json 의 board_tile_*)
 }
 export const BOARD_TILE_DEFINITIONS: TileDefinition[] = [
 	// =========================
 	// [0~9] TOP (10)
 	// =========================
-	{ type: 'START', name: 'START' },
-	{ type: 'CITY', name: '울산' },
-	{ type: 'EVENT', name: '이벤트' },
-	{ type: 'CITY', name: '부산' },
-	{ type: 'BATTLE', name: '전투' },
-	{ type: 'CITY', name: '대구' },
-	{ type: 'EVENT', name: '보상' },
-	{ type: 'CITY', name: '포항' },
-	{ type: 'BATTLE', name: '몬스터' },
-	{ type: 'EVENT', name: '축복' },
+	{ type: 'START', nameKey: 'board_tile_start' },
+	{ type: 'CITY', nameKey: 'board_tile_ulsan' },
+	{ type: 'EVENT', nameKey: 'board_tile_event' },
+	{ type: 'CITY', nameKey: 'board_tile_busan' },
+	{ type: 'BATTLE', nameKey: 'board_tile_battle' },
+	{ type: 'CITY', nameKey: 'board_tile_daegu' },
+	{ type: 'EVENT', nameKey: 'board_tile_reward' },
+	{ type: 'CITY', nameKey: 'board_tile_pohang' },
+	{ type: 'BATTLE', nameKey: 'board_tile_monster' },
+	{ type: 'EVENT', nameKey: 'board_tile_blessing' },
 
 	// =========================
 	// [10~17] RIGHT (8)
 	// =========================
-	{ type: 'CITY', name: '대전' },
-	{ type: 'EVENT', name: '함정' },
-	{ type: 'CITY', name: '수원' },
-	{ type: 'BATTLE', name: '전투' },
-	{ type: 'CITY', name: '인천' },
-	{ type: 'BOSS', name: '보스' },
-	{ type: 'EVENT', name: '상자' },
-	{ type: 'CITY', name: '서울' },
+	{ type: 'CITY', nameKey: 'board_tile_daejeon' },
+	{ type: 'EVENT', nameKey: 'board_tile_trap' },
+	{ type: 'CITY', nameKey: 'board_tile_suwon' },
+	{ type: 'BATTLE', nameKey: 'board_tile_battle' },
+	{ type: 'CITY', nameKey: 'board_tile_incheon' },
+	{ type: 'BOSS', nameKey: 'board_tile_boss' },
+	{ type: 'EVENT', nameKey: 'board_tile_chest' },
+	{ type: 'CITY', nameKey: 'board_tile_seoul' },
 
 	// =========================
 	// [18~25] BOTTOM (8)
 	// =========================
-	{ type: 'CITY', name: '춘천' },
-	{ type: 'BATTLE', name: '전투' },
-	{ type: 'CITY', name: '강릉' },
-	{ type: 'EVENT', name: '보너스' },
-	{ type: 'CITY', name: '경주' },
-	{ type: 'CITY', name: '창원' },
-	{ type: 'EVENT', name: '행운' },
-	{ type: 'BATTLE', name: '보스전' },
+	{ type: 'CITY', nameKey: 'board_tile_chuncheon' },
+	{ type: 'BATTLE', nameKey: 'board_tile_battle' },
+	{ type: 'CITY', nameKey: 'board_tile_gangneung' },
+	{ type: 'EVENT', nameKey: 'board_tile_bonus' },
+	{ type: 'CITY', nameKey: 'board_tile_gyeongju' },
+	{ type: 'CITY', nameKey: 'board_tile_changwon' },
+	{ type: 'EVENT', nameKey: 'board_tile_luck' },
+	{ type: 'BATTLE', nameKey: 'board_tile_boss_battle' },
 
 	// =========================
 	// [26~35] LEFT (10)
 	// =========================
-	{ type: 'CITY', name: '제주' },
-	{ type: 'EVENT', name: '황금상자' },
-	{ type: 'CITY', name: '울릉도' },
-	{ type: 'BATTLE', name: '전투' },
-	{ type: 'CITY', name: '광주' },
-	{ type: 'EVENT', name: '보상' },
-	{ type: 'CITY', name: '대전' },
-	{ type: 'BATTLE', name: '몬스터' },
-	{ type: 'CITY', name: '수원' },
-	{ type: 'EVENT', name: '이벤트' }
+	{ type: 'CITY', nameKey: 'board_tile_jeju' },
+	{ type: 'EVENT', nameKey: 'board_tile_golden_chest' },
+	{ type: 'CITY', nameKey: 'board_tile_ulleungdo' },
+	{ type: 'BATTLE', nameKey: 'board_tile_battle' },
+	{ type: 'CITY', nameKey: 'board_tile_gwangju' },
+	{ type: 'EVENT', nameKey: 'board_tile_reward' },
+	{ type: 'CITY', nameKey: 'board_tile_daejeon' },
+	{ type: 'BATTLE', nameKey: 'board_tile_monster' },
+	{ type: 'CITY', nameKey: 'board_tile_suwon' },
+	{ type: 'EVENT', nameKey: 'board_tile_event' }
 ];

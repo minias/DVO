@@ -52,7 +52,7 @@ export function createBoard(): BoardTile[] {
 		return {
 			id: index + 1,
 			type: definition.type,
-			name: definition.name,
+			nameKey: definition.nameKey,
 			x: position.x * size,
 			y: position.y * size
 		};
