@@ -11,7 +11,8 @@ import (
 )
 
 // NewHandler 는 라우터를 만든다. allowedOrigins 는 CORS 를 허용할 출처 목록이다(비어 있으면 CORS 헤더 없음).
-func NewHandler(conn *sql.DB, allowedOrigins []string) http.Handler {
+// enableDev 가 true 일 때만 인증 없는 개발용 사용자·세이브 경로를 등록한다.
+func NewHandler(conn *sql.DB, allowedOrigins []string, enableDev bool) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +29,10 @@ func NewHandler(conn *sql.DB, allowedOrigins []string) http.Handler {
 		}
 		writeJSON(w, http.StatusOK, cfg)
 	})
+
+	if enableDev {
+		registerDevRoutes(mux, conn)
+	}
 
 	return cors(allowedOrigins, mux)
 }

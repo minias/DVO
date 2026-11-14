@@ -21,7 +21,7 @@ func newTestHandler(t *testing.T, origins []string) http.Handler {
 	if err := db.Migrate(conn); err != nil {
 		t.Fatal(err)
 	}
-	return NewHandler(conn, origins)
+	return NewHandler(conn, origins, true)
 }
 
 // /config 가 시드된 정적 데이터를 JSON 으로 돌려주는지 확인한다.
