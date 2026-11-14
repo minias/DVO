@@ -17,8 +17,31 @@ updates:
     commit-message:
       prefix: 'chore(deps)'
     groups:
+      # vitest 와 @vitest/* 는 버전이 정확히 일치해야 하므로 major 포함 한 PR 로 올린다 (따로 올리면 peer 충돌)
+      vitest:
+        patterns: ['vitest', '@vitest/*']
       # minor/patch 는 한 PR 로 묶어 PR 수를 줄인다. major 는 영향이 크므로 개별 PR 로 만든다
       minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # @sveltejs/kit 의 peer 가 typescript ^5.3.3 || ^6 이라 7 은 설치 불가. kit 이 7 을 지원하면 제거한다
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+
+  # Go 모듈 (백엔드)
+  - package-ecosystem: gomod
+    directory: /backend
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Seoul
+    labels: [dependencies]
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      go-minor-and-patch:
         update-types: [minor, patch]
 
   # GitHub Actions 버전

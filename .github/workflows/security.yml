@@ -55,6 +55,25 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
+  govulncheck:
+    name: govulncheck
+    # 백엔드가 실제로 호출하는 코드에 도달하는 취약점이 있으면 실패
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+
+      - name: Go 취약점 점검
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+
   dependency-review:
     name: dependency review
     # PR 이 새로 들이거나 올리는 의존성의 취약점·라이선스를 검토한다
