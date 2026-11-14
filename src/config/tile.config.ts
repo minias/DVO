@@ -26,9 +26,9 @@ export const TILE_CONFIG = {
 
 	// 보스 (보스 칸)
 	BOSS: {
-		HP: 80,
-		ATTACK_MIN: 10,
-		ATTACK_MAX: 25,
+		HP: 200,
+		ATTACK_MIN: 15,
+		ATTACK_MAX: 35,
 		REWARD_MIN: 200,
 		REWARD_MAX: 200
 	},
