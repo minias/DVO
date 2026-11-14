@@ -9,6 +9,7 @@ DiceVerse Online(DVO)에 관심 가져 주셔서 감사합니다. 이 문서는 
 - 목표 실행 환경은 **Windows / macOS / Linux 의 최신 Chrome** 입니다.
 
 ```bash
+cd frontend      # 앱은 frontend/ 에 있습니다
 npm install
 npm run dev      # 개발 서버 (http://localhost:5173)
 npm run verify   # check → lint → test → build (PR 전에 통과해야 합니다)
@@ -39,9 +40,9 @@ docs: README 구현 상태 갱신
 ## 코드 규칙
 
 - **Svelte 5 Runes** 만 사용합니다 (`$state`, `$derived`, `$effect`). Svelte 4 스토어와 `export let` 은 쓰지 않습니다.
-- **Config First**: 게임 수치(HP, 주사위 개수, 보드 크기 등)는 `src/config` 에서 관리하고 코드에 하드코딩하지 않습니다.
-- **번역 키만 사용**: 화면 문자열은 직접 쓰지 않고 `messages/ko.json`, `messages/en.json` 에 키를 추가합니다. 키는 `ui_*`, `action_*`, `board_*` 처럼 snake_case 입니다.
-- 게임 로직(`src/game`)은 프레임워크에 의존하지 않는 순수 함수로 만들고 단위 테스트를 함께 작성합니다.
+- **Config First**: 게임 수치(HP, 주사위 개수, 보드 크기 등)는 `frontend/src/config` 에서 관리하고 코드에 하드코딩하지 않습니다.
+- **번역 키만 사용**: 화면 문자열은 직접 쓰지 않고 `frontend/messages/ko.json`, `frontend/messages/en.json` 에 키를 추가합니다. 키는 `ui_*`, `action_*`, `board_*` 처럼 snake_case 입니다.
+- 게임 로직(`frontend/src/game`)은 프레임워크에 의존하지 않는 순수 함수로 만들고 단위 테스트를 함께 작성합니다.
 - 코드 주석은 한국어로 작성합니다.
 - API 주소는 `import.meta.env.VITE_API_BASE_URL` 로만 읽고 `localhost` 를 하드코딩하지 않습니다.
 

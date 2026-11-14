@@ -67,7 +67,7 @@ DiceVerse Online 은 복잡한 조작이 필요한 실시간 MMORPG 가 아니�
 
 ```bash
 git clone https://github.com/minias/DVO.git
-cd DVO
+cd DVO/frontend
 npm install
 npm run dev
 ```
@@ -84,22 +84,22 @@ npm run dev
 ### 기술 스택
 
 - SvelteKit 2 / Svelte 5 (Runes), TypeScript, Tailwind CSS 4
-- Canvas 2D 렌더링, Paraglide 다국어 (`messages/{ko,en}.json`)
+- Canvas 2D 렌더링, Paraglide 다국어 (`frontend/messages/{ko,en}.json`)
 - Vite, Vitest, ESLint, Prettier
 - 향후 백엔드: Go, MariaDB, Redis
 
 ### 폴더 구조
 
 ```text
-messages/        번역 메시지 (ko, en)
-src/config/      게임 수치 설정 (보드, 주사위, 렌더링 등)
-src/game/        프레임워크와 무관한 게임 로직 (보드, 주사위, 세션, 렌더러)
-src/lib/         화면 컴포넌트 (상태창, 액션 바, 언어 전환)
-src/routes/      페이지
-docs/            문서와 이미지
+frontend/messages/     번역 메시지 (ko, en)
+frontend/src/config/   게임 수치 설정 (보드, 주사위, 렌더링 등)
+frontend/src/game/     프레임워크와 무관한 게임 로직 (보드, 주사위, 세션, 렌더러)
+frontend/src/lib/      화면 컴포넌트 (상태창, 액션 바, 언어 전환)
+frontend/src/routes/   페이지
+docs/                  문서와 이미지
 ```
 
-### 개발 명령어
+### 개발 명령어 (`frontend/` 에서 실행)
 
 ```bash
 npm run check      # 타입 검사

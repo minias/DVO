@@ -4,5 +4,5 @@
 /.claude/          @minias
 /CLAUDE.md         @minias
 /SECURITY.md       @minias
-/package.json      @minias
-/package-lock.json @minias
+/frontend/package.json       @minias
+/frontend/package-lock.json  @minias
