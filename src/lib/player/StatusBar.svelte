@@ -72,5 +72,8 @@
 		</div>
 	</div>
 
+	<!-- 무기 강화 단계 -->
+	<p class="font-semibold text-orange-300">{m.ui_weapon({ tier: session.stats.weapon })}</p>
+
 	<p class="font-semibold text-amber-300">{m.ui_gold({ amount: session.stats.gold })}</p>
 </section>
