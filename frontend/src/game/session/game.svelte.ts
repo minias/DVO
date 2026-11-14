@@ -106,6 +106,45 @@ export class GameSession {
 		this.lastEvent = { type: 'MOVED', move };
 		this.lastTile = { type: 'TILE', tileId: tile.id, startBonus, outcome: resolution.outcome };
 	}
+
+	// 저장용 스냅샷. 서버의 position 은 0부터 시작하므로 heroPosition(1부터) 에서 1을 뺀다.
+	// 이동 중에는 확정된 칸만 저장한다 (turn 은 저장하지 않는다)
+	snapshot(): PlayerStats & { position: number } {
+		return { ...this.stats, position: this.heroPosition - 1 };
+	}
+
+	// 저장된 상태를 복원한다. 범위를 벗어난 값은 거부(false)해 깨진 세이브로 시작하지 않는다.
+	// 이동 중이면 무시한다.
+	restore(save: PlayerStats & { position: number }): boolean {
+		if (this.phase !== 'IDLE') {
+			return false;
+		}
+		const ints = [save.hp, save.maxHp, save.mp, save.maxMp, save.gold, save.level, save.exp];
+		const valid =
+			[...ints, save.weapon, save.position].every((v) => Number.isInteger(v) && v >= 0) &&
+			save.maxHp >= 1 &&
+			save.level >= 1 &&
+			save.hp <= save.maxHp &&
+			save.mp <= save.maxMp &&
+			save.position < this.tiles.length;
+		if (!valid) {
+			return false;
+		}
+
+		// 서버 응답의 부가 필드(updatedAt 등)가 섞이지 않도록 필요한 값만 옮긴다
+		this.stats = {
+			hp: save.hp,
+			maxHp: save.maxHp,
+			mp: save.mp,
+			maxMp: save.maxMp,
+			gold: save.gold,
+			level: save.level,
+			exp: save.exp,
+			weapon: save.weapon
+		};
+		this.heroPosition = save.position + 1;
+		return true;
+	}
 }
 
 export function createGameSession(): GameSession {
