@@ -19,18 +19,44 @@ export function getApiBaseUrl(): string | null {
 	return base.trim().replace(/\/+$/, '');
 }
 
-export async function apiGet<T>(
+interface RequestOptions {
+	timeoutMs?: number;
+	fetcher?: typeof fetch;
+}
+
+export function apiGet<T>(path: string, options: RequestOptions = {}): Promise<T> {
+	return apiRequest<T>('GET', path, undefined, options);
+}
+
+// JSON 본문을 보내는 요청 (POST·PUT)
+export function apiSend<T>(
+	method: 'POST' | 'PUT',
 	path: string,
-	options: { timeoutMs?: number; fetcher?: typeof fetch } = {}
+	body: unknown,
+	options: RequestOptions = {}
+): Promise<T> {
+	return apiRequest<T>(method, path, body, options);
+}
+
+async function apiRequest<T>(
+	method: string,
+	path: string,
+	body: unknown,
+	options: RequestOptions
 ): Promise<T> {
 	const base = getApiBaseUrl();
 	if (base === null) throw new ApiError('VITE_API_BASE_URL 이 설정되지 않았습니다');
 
 	const { timeoutMs = 5000, fetcher = fetch } = options;
+	const headers: Record<string, string> = { Accept: 'application/json' };
+	if (body !== undefined) headers['Content-Type'] = 'application/json';
+
 	let response: Response;
 	try {
 		response = await fetcher(`${base}${path}`, {
-			headers: { Accept: 'application/json' },
+			method,
+			headers,
+			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: AbortSignal.timeout(timeoutMs)
 		});
 	} catch (cause) {
