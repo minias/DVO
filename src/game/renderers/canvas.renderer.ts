@@ -8,7 +8,7 @@ import type { Renderer } from '../core/renderer.interface';
 import type { TextResolver } from '../core/text.resolver';
 import { InputManager } from '../input/input.manager';
 import type { GameSession } from '../session/game.svelte';
-import type { MoveResult } from '../session/session.model';
+import type { MoveResult, TileEvent, TileOutcome } from '../session/session.model';
 
 export class CanvasRenderer implements Renderer {
 	private canvas!: HTMLCanvasElement;
@@ -33,11 +33,16 @@ export class CanvasRenderer implements Renderer {
 	private animatingMove: MoveResult | null = null;
 	private animationStartMs = 0;
 
+	// 칸 효과 강조 연출: 같은 결과에 대해 한 번만 시작하도록 참조를 보관한다
+	private flashedTile: TileEvent | null = null;
+	private flashStartMs = 0;
+
 	// 게임 세션을 연결한다 (연결 전에는 보드를 그리지 않는다)
 	public bind(session: GameSession, text: TextResolver): void {
 		this.session = session;
 		this.text = text;
 		this.animatingMove = null;
+		this.flashedTile = null;
 	}
 
 	public initialize(canvas: HTMLCanvasElement): void {
@@ -145,6 +150,11 @@ export class CanvasRenderer implements Renderer {
 		}
 
 		// =========================
+		// TILE EFFECT FLASH (도착 칸 결과 강조)
+		// =========================
+		this.drawTileFlash(session, tiles, startX, startY, scale, tileSize);
+
+		// =========================
 		// HERO RENDER (STATE ONLY)
 		// =========================
 		const heroPoint = this.resolveHeroPoint(session, tiles);
@@ -160,6 +170,72 @@ export class CanvasRenderer implements Renderer {
 			this.ctx.fill();
 			this.ctx.closePath();
 		}
+	}
+
+	// 칸 효과 결과에 어울리는 강조 색을 고른다 (표시할 것이 없으면 null)
+	private flashColor(outcome: TileOutcome): string | null {
+		const colors = RENDER_CONFIG.TILE_FLASH_COLORS;
+
+		switch (outcome.kind) {
+			case 'EVENT':
+				return outcome.effect === 'GOLD_GAIN' || outcome.effect === 'HP_HEAL'
+					? colors.positive
+					: colors.negative;
+			case 'BATTLE':
+				return outcome.won ? colors.reward : colors.negative;
+			case 'CITY':
+				return colors.city;
+			case 'JAIL':
+			case 'JAIL_SKIP':
+				return colors.jail;
+			default:
+				return null;
+		}
+	}
+
+	// 도착 칸을 결과 색으로 번쩍이게 하고 시간에 따라 투명해지게 한다
+	private drawTileFlash(
+		session: GameSession,
+		tiles: BoardTile[],
+		startX: number,
+		startY: number,
+		scale: number,
+		tileSize: number
+	): void {
+		const event = session.lastTile;
+
+		// 굴림이 시작되어 결과가 지워지면 연출도 끝낸다
+		if (!event) {
+			this.flashedTile = null;
+			return;
+		}
+
+		// 새 결과가 들어오면 연출 시작 시각을 기록한다
+		if (this.flashedTile !== event) {
+			this.flashedTile = event;
+			this.flashStartMs = performance.now();
+		}
+
+		const progress = (performance.now() - this.flashStartMs) / RENDER_CONFIG.TILE_FLASH_MS;
+		const color = this.flashColor(event.outcome);
+		const tile = tiles.find((candidate) => candidate.id === event.tileId);
+
+		if (progress >= 1 || !color || !tile) {
+			return;
+		}
+
+		const x = startX + tile.x * scale;
+		const y = startY + tile.y * scale;
+
+		this.ctx.save();
+		this.ctx.globalAlpha = 0.55 * (1 - progress);
+		this.ctx.fillStyle = color;
+		this.ctx.fillRect(x, y, tileSize, tileSize);
+		this.ctx.globalAlpha = 1 - progress;
+		this.ctx.strokeStyle = color;
+		this.ctx.lineWidth = 3;
+		this.ctx.strokeRect(x, y, tileSize, tileSize);
+		this.ctx.restore();
 	}
 
 	// 영웅을 그릴 보드 좌표를 계산한다. 이동 연출이 끝나면 세션에 완료를 알린다.
