@@ -3,6 +3,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import { textResolver } from '$lib/i18n/text.resolver';
 	import { CanvasRenderer } from '$game/renderers/canvas.renderer';
 
 	import type { GameSession } from '$game/session/game.svelte';
@@ -24,7 +25,7 @@
 		renderer.resize(window.innerWidth, window.innerHeight);
 	}
 	onMount(() => {
-		renderer.bind(session);
+		renderer.bind(session, textResolver);
 		renderer.initialize(canvas);
 
 		resizeCanvas();

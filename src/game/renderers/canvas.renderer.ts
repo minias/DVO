@@ -5,6 +5,7 @@ import { RENDER_CONFIG } from '$config/render.config';
 
 import type { BoardTile } from '../board/board.model';
 import type { Renderer } from '../core/renderer.interface';
+import type { TextResolver } from '../core/text.resolver';
 import { InputManager } from '../input/input.manager';
 import type { GameSession } from '../session/game.svelte';
 import type { MoveResult } from '../session/session.model';
@@ -25,13 +26,17 @@ export class CanvasRenderer implements Renderer {
 	// 렌더러가 읽어 그릴 게임 상태 (상태 변경은 세션의 roll / completeMove 로만 한다)
 	private session: GameSession | null = null;
 
+	// 타일 문구 번역기 (그릴 때마다 호출하므로 언어 전환이 즉시 반영된다)
+	private text: TextResolver | null = null;
+
 	// 현재 진행 중인 이동 연출 (같은 pendingMove 에 대해 중복 시작을 막기 위해 참조를 보관)
 	private animatingMove: MoveResult | null = null;
 	private animationStartMs = 0;
 
 	// 게임 세션을 연결한다 (연결 전에는 보드를 그리지 않는다)
-	public bind(session: GameSession): void {
+	public bind(session: GameSession, text: TextResolver): void {
 		this.session = session;
+		this.text = text;
 		this.animatingMove = null;
 	}
 
@@ -127,8 +132,16 @@ export class CanvasRenderer implements Renderer {
 			this.ctx.fillText(String(tile.id), x + tileSize * 0.08, y + tileSize * 0.2);
 
 			this.ctx.font = `${textFontSize}px ${RENDER_CONFIG.FONT_FAMILY}`;
-			this.ctx.fillText(tile.type, x + tileSize * 0.08, y + tileSize * 0.45);
-			this.ctx.fillText(tile.name, x + tileSize * 0.08, y + tileSize * 0.7);
+			this.ctx.fillText(
+				this.text ? this.text.tileType(tile.type) : tile.type,
+				x + tileSize * 0.08,
+				y + tileSize * 0.45
+			);
+			this.ctx.fillText(
+				this.text ? this.text.tileName(tile) : tile.nameKey,
+				x + tileSize * 0.08,
+				y + tileSize * 0.7
+			);
 		}
 
 		// =========================
