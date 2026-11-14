@@ -34,3 +34,6 @@ docs/IA.md
 # 백엔드 SQLite 파일
 backend/*.db*
 backend/bin/
+
+# 에디터 설정 (개인별)
+.vscode/
