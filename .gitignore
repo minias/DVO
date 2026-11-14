@@ -33,3 +33,4 @@ docs/IA.md
 
 # 백엔드 SQLite 파일
 backend/*.db*
+backend/bin/

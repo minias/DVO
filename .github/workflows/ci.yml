@@ -18,6 +18,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 백엔드(Go) 검증. 필수 체크(verify)와 별개이며 backend/ 가 바뀌지 않아도 빠르게 끝난다
+  backend:
+    name: backend (go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+
+      # 서식 → vet → 테스트. 로컬과 같은 `make check` 를 쓴다
+      - name: 검증 게이트
+        run: make check
+
   verify:
     name: verify (ubuntu + chromium)
     runs-on: ubuntu-latest

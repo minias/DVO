@@ -1,21 +1,38 @@
-// 서버 진입점. 현재(T2)는 DB 를 열고 마이그레이션만 적용한다. API 는 T3 에서 추가한다.
+// 서버 진입점. DB 를 열어 마이그레이션을 적용하고 HTTP API 를 제공한다.
 package main
 
 import (
 	"log"
+	"net/http"
 	"os"
+	"strings"
+	"time"
 
+	"github.com/minias/DVO/backend/internal/api"
 	"github.com/minias/DVO/backend/internal/db"
 )
 
+// getenv 는 환경변수가 비어 있으면 기본값을 돌려준다.
+func getenv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
 func main() {
-	// DB 경로는 서버 환경변수로 받는다. 기본값은 로컬 개발용 파일이다.
-	path := os.Getenv("DVO_DB_PATH")
-	if path == "" {
-		path = "dvo.db"
+	// 설정은 모두 서버 환경변수로 받는다. 기본값은 로컬 개발용이다.
+	dbPath := getenv("DVO_DB_PATH", "dvo.db")
+	addr := getenv("DVO_ADDR", "127.0.0.1:8080")
+	// CORS 허용 출처(쉼표 구분). 비우면 교차 출처 요청을 허용하지 않는다.
+	var origins []string
+	for o := range strings.SplitSeq(os.Getenv("DVO_CORS_ORIGINS"), ",") {
+		if o = strings.TrimSpace(o); o != "" {
+			origins = append(origins, o)
+		}
 	}
 
-	conn, err := db.Open(path)
+	conn, err := db.Open(dbPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,5 +41,12 @@ func main() {
 	if err := db.Migrate(conn); err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("DB 준비 완료: %s", path)
+
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           api.NewHandler(conn, origins),
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+	log.Printf("서버 시작: %s (DB %s)", addr, dbPath)
+	log.Fatal(srv.ListenAndServe())
 }

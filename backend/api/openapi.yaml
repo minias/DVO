@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: DVO API
+  version: 0.1.0
+  description: DVO 백엔드 API 계약. 프론트는 이 문서를 기준으로 연동한다. (인증 없는 로컬 개발용 1차)
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /healthz:
+    get:
+      summary: 생존 확인
+      responses:
+        '200':
+          description: 정상
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+  /api/v1/config:
+    get:
+      summary: 정적 게임 데이터 일괄 조회 (앱 시작 시 1회)
+      responses:
+        '200':
+          description: 타일 정의, 몬스터, 수치, 아이템
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameConfig'
+        '500':
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+    Tile:
+      type: object
+      required: [id, type, nameKey]
+      properties:
+        id: { type: integer, description: 보드 칸 번호(0부터) }
+        type: { type: string, enum: [START, CITY, EVENT, BATTLE, BOSS, JAIL] }
+        nameKey: { type: string, description: 프론트 messages 의 번역 키 }
+    Foe:
+      type: object
+      required: [id, hp, attackMin, attackMax, rewardMin, rewardMax, exp]
+      properties:
+        id: { type: string, example: monster }
+        hp: { type: integer }
+        attackMin: { type: integer }
+        attackMax: { type: integer }
+        rewardMin: { type: integer }
+        rewardMax: { type: integer }
+        exp: { type: integer }
+    Item:
+      type: object
+      required: [id, kind, nameKey, price]
+      properties:
+        id: { type: string }
+        kind: { type: string }
+        nameKey: { type: string }
+        price: { type: integer }
+        effect: { type: object, description: 아이템 효과(T6 에서 확정) }
+    GameConfig:
+      type: object
+      required: [tiles, foes, rules, items]
+      properties:
+        tiles:
+          type: array
+          items: { $ref: '#/components/schemas/Tile' }
+        foes:
+          type: array
+          items: { $ref: '#/components/schemas/Foe' }
+        rules:
+          type: object
+          additionalProperties: { type: number }
+          description: 이벤트·도시·감옥·스킬·성장 수치 (키는 snake_case)
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Item' }
