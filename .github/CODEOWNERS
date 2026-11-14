@@ -1,0 +1,8 @@
+# 변경 시 리뷰를 요청할 소유자. 정책·보안·CI 파일은 반드시 소유자가 확인한다
+*                  @minias
+/.github/          @minias
+/.claude/          @minias
+/CLAUDE.md         @minias
+/SECURITY.md       @minias
+/package.json      @minias
+/package-lock.json @minias
