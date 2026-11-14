@@ -11,15 +11,60 @@ const low = () => 0;
 const high = () => 0.999;
 
 describe('resolveTile', () => {
-	it('출발·도시 칸은 아무 일도 일어나지 않는다', () => {
+	it('출발 칸은 아무 일도 일어나지 않는다', () => {
 		const stats = createInitialStats();
+		const result = resolveTile('START', stats, low);
 
-		for (const type of ['START', 'CITY'] as const) {
-			const result = resolveTile(type, stats, low);
-			expect(result.outcome).toEqual({ kind: 'NONE' });
-			expect(result.stats).toBe(stats);
-			expect(result.respawn).toBe(false);
-		}
+		expect(result.outcome).toEqual({ kind: 'NONE' });
+		expect(result.stats).toBe(stats);
+		expect(result.respawn).toBe(false);
+	});
+
+	it('도시: 체력이 멀쩡하면 골드를 쓰지 않는다', () => {
+		const result = resolveTile('CITY', createInitialStats(), low);
+
+		expect(result.outcome).toMatchObject({ kind: 'CITY', restCost: 0, tooPoor: false });
+		expect(result.stats.gold).toBe(0);
+	});
+
+	it('도시: 다쳤고 골드가 있으면 비용을 내고 전회복한다', () => {
+		const base = createInitialStats();
+		const hurt = { ...base, hp: 10, mp: 0, gold: 50 };
+		const result = resolveTile('CITY', hurt, low);
+
+		expect(result.outcome).toMatchObject({ kind: 'CITY', restCost: 20, weaponUpgraded: false });
+		expect(result.stats).toMatchObject({ hp: base.maxHp, mp: base.maxMp, gold: 30 });
+	});
+
+	it('도시: 골드가 부족하면 쉬지 못한다', () => {
+		const hurt = { ...createInitialStats(), hp: 10, gold: 5 };
+		const result = resolveTile('CITY', hurt, low);
+
+		expect(result.outcome).toMatchObject({ kind: 'CITY', tooPoor: true });
+		expect(result.stats).toEqual(hurt);
+	});
+
+	it('도시: 골드가 충분하면 무기를 강화한다', () => {
+		const rich = { ...createInitialStats(), gold: 150 };
+		const result = resolveTile('CITY', rich, low);
+
+		expect(result.outcome).toMatchObject({ kind: 'CITY', weaponUpgraded: true, weaponCost: 100 });
+		expect(result.stats).toMatchObject({ weapon: 1, gold: 50 });
+	});
+
+	it('감옥: 가진 골드까지만 벌금을 내고 쉬는 턴을 알린다', () => {
+		const poor = { ...createInitialStats(), gold: 10 };
+		const result = resolveTile('JAIL', poor, low);
+
+		expect(result.outcome).toEqual({ kind: 'JAIL', fine: 10, skipTurns: 1 });
+		expect(result.stats.gold).toBe(0);
+	});
+
+	it('전투: MP 가 있으면 강타로 MP 를 쓴다', () => {
+		const result = resolveTile('BATTLE', createInitialStats(), low);
+
+		expect(result.outcome).toMatchObject({ kind: 'BATTLE', won: true });
+		expect(result.stats.mp).toBeLessThan(createInitialStats().mp);
 	});
 
 	it('이벤트: 첫 효과(골드 획득)는 MIN 만큼 골드를 준다', () => {
@@ -73,8 +118,8 @@ describe('resolveTile', () => {
 		expect(result.respawn).toBe(true);
 	});
 
-	it('보스는 강하다 (양쪽 모두 최대 공격력이면 영웅이 진다)', () => {
-		const result = resolveTile('BOSS', createInitialStats(), high);
+	it('보스는 강하다 (MP 가 없고 양쪽 모두 최대 공격력이면 영웅이 진다)', () => {
+		const result = resolveTile('BOSS', { ...createInitialStats(), mp: 0 }, high);
 
 		expect(result.outcome).toMatchObject({ kind: 'BATTLE', boss: true, won: false });
 	});

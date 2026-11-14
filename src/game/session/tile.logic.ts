@@ -5,8 +5,22 @@ import { TILE_CONFIG } from '$config/tile.config';
 import type { RandomSource } from '../dice/dice.model';
 import type { TileType } from '../board/board.model';
 import type { PlayerStats } from '../player/player.model';
-import { attackBonus, changeGold, changeHp, gainExp, isDefeated } from '../player/player.logic';
-import type { BattleOutcome, EventEffect, EventOutcome, TileOutcome } from './session.model';
+import {
+	attackBonus,
+	changeGold,
+	changeHp,
+	changeMp,
+	gainExp,
+	isDefeated
+} from '../player/player.logic';
+import type {
+	BattleOutcome,
+	CityOutcome,
+	EventEffect,
+	EventOutcome,
+	JailOutcome,
+	TileOutcome
+} from './session.model';
 
 // 칸 효과 처리 결과: 바뀐 능력치와 일어난 일, 부활(출발 칸 복귀) 여부
 export interface TileResolution {
@@ -76,13 +90,23 @@ function resolveBattle(stats: PlayerStats, boss: boolean, random: RandomSource):
 	let foeHp: number = foe.HP;
 	let current = stats;
 	let won = false;
-	// 레벨에 따른 공격력 보정
-	const bonus = attackBonus(stats.level);
+	// 레벨·무기에 따른 공격력 보정
+	const bonus = attackBonus(stats.level, stats.weapon);
+	let mpSpent = 0;
 
 	// 공격력 최솟값이 1 이상이라 반드시 끝나지만, 설정 실수로 무한 반복하지 않게 상한을 둔다
 	for (let round = 0; round < 200; round++) {
+		// MP 가 충분하면 강타를 써서 공격력을 높인다
+		let skill = 0;
+		if (current.mp >= TILE_CONFIG.SKILL.MP_COST) {
+			current = changeMp(current, -TILE_CONFIG.SKILL.MP_COST);
+			mpSpent += TILE_CONFIG.SKILL.MP_COST;
+			skill = TILE_CONFIG.SKILL.BONUS_ATTACK;
+		}
 		foeHp -=
-			randomInt(TILE_CONFIG.PLAYER_ATTACK.MIN, TILE_CONFIG.PLAYER_ATTACK.MAX, random) + bonus;
+			randomInt(TILE_CONFIG.PLAYER_ATTACK.MIN, TILE_CONFIG.PLAYER_ATTACK.MAX, random) +
+			bonus +
+			skill;
 		if (foeHp <= 0) {
 			won = true;
 			break;
@@ -110,10 +134,55 @@ function resolveBattle(stats: PlayerStats, boss: boolean, random: RandomSource):
 		expGained,
 		levelsGained: grown.levelsGained,
 		defeated: defeat.defeated,
-		goldLost: defeat.goldLost
+		goldLost: defeat.goldLost,
+		mpSpent
 	};
 
 	return { stats: defeat.stats, outcome, respawn: defeat.defeated };
+}
+
+// 도시 칸: 골드를 내고 HP·MP 를 회복한 뒤, 남은 골드로 무기를 강화한다
+function resolveCity(stats: PlayerStats): TileResolution {
+	const cost = TILE_CONFIG.CITY.REST_COST;
+	const needsRest = stats.hp < stats.maxHp || stats.mp < stats.maxMp;
+	let current = stats;
+	let restCost = 0;
+	let tooPoor = false;
+
+	if (needsRest) {
+		if (stats.gold >= cost) {
+			current = changeMp(changeHp(changeGold(stats, -cost), stats.maxHp), stats.maxMp);
+			restCost = cost;
+		} else {
+			tooPoor = true;
+		}
+	}
+
+	// 무기 강화: 최대 단계 전이고 골드가 충분할 때만
+	const weaponCost = (current.weapon + 1) * TILE_CONFIG.CITY.WEAPON_COST_PER_TIER;
+	const weaponUpgraded =
+		current.weapon < GROWTH_CONFIG.MAX_WEAPON_TIER && current.gold >= weaponCost;
+	if (weaponUpgraded) {
+		current = { ...changeGold(current, -weaponCost), weapon: current.weapon + 1 };
+	}
+
+	const outcome: CityOutcome = {
+		kind: 'CITY',
+		restCost,
+		tooPoor,
+		weaponUpgraded,
+		weaponCost: weaponUpgraded ? weaponCost : 0
+	};
+
+	return { stats: current, outcome, respawn: false };
+}
+
+// 감옥 칸: 벌금을 내고 쉬는 턴은 호출자(세션)가 처리한다
+function resolveJail(stats: PlayerStats): TileResolution {
+	const fine = Math.min(stats.gold, TILE_CONFIG.JAIL.FINE);
+	const outcome: JailOutcome = { kind: 'JAIL', fine, skipTurns: TILE_CONFIG.JAIL.SKIP_TURNS };
+
+	return { stats: changeGold(stats, -fine), outcome, respawn: false };
 }
 
 // 영웅이 도착한 칸의 효과를 처리한다 (순수 함수: 원본 stats 는 바뀌지 않는다)
@@ -129,8 +198,12 @@ export function resolveTile(
 			return resolveBattle(stats, false, random);
 		case 'BOSS':
 			return resolveBattle(stats, true, random);
+		case 'CITY':
+			return resolveCity(stats);
+		case 'JAIL':
+			return resolveJail(stats);
 		default:
-			// START, CITY, JAIL 은 아직 효과가 없다
+			// START 는 효과가 없다
 			return { stats, outcome: { kind: 'NONE' }, respawn: false };
 	}
 }

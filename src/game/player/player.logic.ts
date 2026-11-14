@@ -12,7 +12,8 @@ export function createInitialStats(): PlayerStats {
 		maxMp: PLAYER_CONFIG.MAX_MP,
 		gold: PLAYER_CONFIG.INITIAL_GOLD,
 		level: GROWTH_CONFIG.INITIAL_LEVEL,
-		exp: 0
+		exp: 0,
+		weapon: 0
 	};
 }
 
@@ -59,9 +60,12 @@ export function expToNext(level: number): number {
 	return level * GROWTH_CONFIG.EXP_PER_LEVEL;
 }
 
-// 레벨에 따른 영웅 공격력 보정 (레벨 1 은 0)
-export function attackBonus(level: number): number {
-	return (level - GROWTH_CONFIG.INITIAL_LEVEL) * GROWTH_CONFIG.ATTACK_PER_LEVEL;
+// 레벨·무기 단계에 따른 영웅 공격력 보정 (레벨 1·무기 0 단계는 0)
+export function attackBonus(level: number, weapon = 0): number {
+	return (
+		(level - GROWTH_CONFIG.INITIAL_LEVEL) * GROWTH_CONFIG.ATTACK_PER_LEVEL +
+		weapon * GROWTH_CONFIG.ATTACK_PER_WEAPON_TIER
+	);
 }
 
 // 경험치를 얻는다. 레벨업마다 최대 HP·MP 가 오르고 HP·MP 를 모두 회복한다.

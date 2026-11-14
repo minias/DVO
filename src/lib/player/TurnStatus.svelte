@@ -46,7 +46,16 @@
 			lines.push(m.ui_outcome_exp({ amount: o.expGained }));
 			if (o.levelsGained > 0) lines.push(m.ui_outcome_level_up({ level: session.stats.level }));
 		}
-		if (o.kind !== 'NONE' && o.defeated) lines.push(m.ui_outcome_defeated({ gold: o.goldLost }));
+		if (o.kind === 'BATTLE' && o.mpSpent > 0) lines.push(m.ui_outcome_skill({ mp: o.mpSpent }));
+		if (o.kind === 'CITY') {
+			if (o.restCost > 0) lines.push(m.ui_outcome_city_rest({ cost: o.restCost }));
+			if (o.tooPoor) lines.push(m.ui_outcome_city_poor());
+			if (o.weaponUpgraded) lines.push(m.ui_outcome_weapon_up({ cost: o.weaponCost }));
+		}
+		if (o.kind === 'JAIL') lines.push(m.ui_outcome_jail({ fine: o.fine, turns: o.skipTurns }));
+		if (o.kind === 'JAIL_SKIP') lines.push(m.ui_outcome_jail_skip({ remaining: o.remaining }));
+		if ((o.kind === 'EVENT' || o.kind === 'BATTLE') && o.defeated)
+			lines.push(m.ui_outcome_defeated({ gold: o.goldLost }));
 
 		return lines;
 	});

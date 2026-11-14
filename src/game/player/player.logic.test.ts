@@ -22,7 +22,8 @@ describe('createInitialStats', () => {
 			maxMp: PLAYER_CONFIG.MAX_MP,
 			gold: PLAYER_CONFIG.INITIAL_GOLD,
 			level: GROWTH_CONFIG.INITIAL_LEVEL,
-			exp: 0
+			exp: 0,
+			weapon: 0
 		});
 	});
 });

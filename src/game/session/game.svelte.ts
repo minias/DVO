@@ -41,12 +41,28 @@ export class GameSession {
 	// 마지막 칸 효과 결과 (화면의 결과 문구용. 굴림이 시작되면 지운다)
 	lastTile = $state<TileEvent | null>(null);
 
+	// 감옥에서 앞으로 쉬어야 하는 턴 수
+	jailTurns = $state(0);
+
 	// 주사위를 굴릴 수 있는지 여부
 	canRoll = $derived(this.phase === 'IDLE');
 
 	// 주사위를 굴리고 이동을 시작한다. 이미 이동 중이면 무시한다.
 	roll(random?: RandomSource): void {
 		if (!this.canRoll) {
+			return;
+		}
+
+		// 감옥에 갇혀 있으면 이동 없이 턴만 넘긴다
+		if (this.jailTurns > 0) {
+			this.jailTurns -= 1;
+			this.turn += 1;
+			this.lastTile = {
+				type: 'TILE',
+				tileId: this.heroPosition,
+				startBonus: 0,
+				outcome: { kind: 'JAIL_SKIP', remaining: this.jailTurns }
+			};
 			return;
 		}
 
@@ -79,6 +95,9 @@ export class GameSession {
 		const resolution = resolveTile(tile.type, changeGold(this.stats, startBonus), random);
 
 		this.stats = resolution.stats;
+		if (resolution.outcome.kind === 'JAIL') {
+			this.jailTurns = resolution.outcome.skipTurns;
+		}
 		// 쓰러졌으면 출발 칸에서 부활한다
 		if (resolution.respawn) {
 			this.heroPosition = 1;
