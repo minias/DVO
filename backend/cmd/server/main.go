@@ -32,6 +32,9 @@ func main() {
 		}
 	}
 
+	// 인증 없는 개발용 사용자·세이브 경로. 로컬 개발에서만 "1" 로 켠다(외부 공개 금지).
+	enableDev := os.Getenv("DVO_DEV_ENDPOINTS") == "1"
+
 	conn, err := db.Open(dbPath)
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +47,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           api.NewHandler(conn, origins),
+		Handler:           api.NewHandler(conn, origins, enableDev),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	log.Printf("서버 시작: %s (DB %s)", addr, dbPath)
