@@ -122,8 +122,125 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /api/v1/users/{id}/inventory:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    get:
+      summary: 인벤토리 조회 (DVO_DEV_ENDPOINTS=1 일 때만 제공)
+      responses:
+        "200":
+          description: 보유 아이템 목록(수량 1 이상만)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryEntry"
+  /api/v1/users/{id}/inventory/buy:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    post:
+      summary: 아이템 구매 (골드 차감, 아이템별 최대 보유량 rule.max_item_qty)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+      responses:
+        "200":
+          description: 구매 후 세이브와 인벤토리
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemResult"
+        "400":
+          description: 잘못된 id 또는 아이템 (invalid_id, invalid_item, invalid_body)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: 세이브 없음 (not_found)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: 골드 부족 또는 보유 한도 (not_enough_gold, inventory_full)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/v1/users/{id}/inventory/use:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    post:
+      summary: 아이템 사용 (수량 1 감소, HP·MP 최대치까지 회복)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+      responses:
+        "200":
+          description: 사용 후 세이브와 인벤토리
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemResult"
+        "400":
+          description: 잘못된 id 또는 아이템 (invalid_id, invalid_item, invalid_body)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: 세이브 없음 (not_found)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: 보유하지 않음 (no_item)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
+    InventoryEntry:
+      type: object
+      required: [itemId, qty]
+      properties:
+        itemId: { type: string }
+        qty: { type: integer, minimum: 1 }
+    ItemRequest:
+      type: object
+      required: [itemId]
+      additionalProperties: false
+      properties:
+        itemId: { type: string }
+    ItemResult:
+      type: object
+      required: [save, inventory]
+      properties:
+        save:
+          $ref: "#/components/schemas/Save"
+        inventory:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventoryEntry"
     Error:
       type: object
       properties:

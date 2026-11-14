@@ -32,6 +32,7 @@ func NewHandler(conn *sql.DB, allowedOrigins []string, enableDev bool) http.Hand
 
 	if enableDev {
 		registerDevRoutes(mux, conn)
+		registerInventoryRoutes(mux, conn) // 인증 전이므로 개발용 경로와 같은 조건으로만 연다
 	}
 
 	return cors(allowedOrigins, mux)
