@@ -61,5 +61,11 @@
 	"ui_outcome_boss_win": "Boss defeated! Gold +{gold} (HP -{damage})",
 	"ui_outcome_battle_lose": "Battle lost... (HP -{damage})",
 	"ui_outcome_boss_lose": "Defeated by the boss... (HP -{damage})",
-	"ui_outcome_defeated": "You fell! Gold -{gold}, revived at Start"
+	"ui_outcome_defeated": "You fell! Gold -{gold}, revived at Start",
+	"ui_outcome_skill": "Power strike! MP -{mp}",
+	"ui_outcome_city_rest": "Rested in the city! HP·MP restored (Gold -{cost})",
+	"ui_outcome_city_poor": "Not enough gold to rest",
+	"ui_outcome_weapon_up": "Weapon upgraded! Attack up (Gold -{cost})",
+	"ui_outcome_jail": "Jail! Fine -{fine}, skip {turns} turn(s)",
+	"ui_outcome_jail_skip": "Serving time... ({remaining} turn(s) left)"
 }

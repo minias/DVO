@@ -22,4 +22,7 @@ export interface PlayerStats {
 
 	// 현재 레벨에서 쌓은 경험치 (최대 레벨에서는 0 으로 고정)
 	exp: number;
+
+	// 무기 강화 단계 (0 ~ 최대 단계)
+	weapon: number;
 }

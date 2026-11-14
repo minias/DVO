@@ -68,9 +68,38 @@ export interface BattleOutcome {
 	levelsGained: number;
 	defeated: boolean;
 	goldLost: number;
+	// 전투 중 스킬로 쓴 MP
+	mpSpent: number;
 }
 
-export type TileOutcome = NoneOutcome | EventOutcome | BattleOutcome;
+// 도시 칸: 휴식(회복)과 무기 강화 결과
+export interface CityOutcome {
+	kind: 'CITY';
+	// 휴식 비용으로 낸 골드 (0 이면 휴식하지 않음)
+	restCost: number;
+	// 골드가 부족해 휴식하지 못했는지 여부
+	tooPoor: boolean;
+	// 무기를 강화했으면 true
+	weaponUpgraded: boolean;
+	weaponCost: number;
+}
+
+// 감옥 칸: 벌금과 쉬게 될 턴 수
+export interface JailOutcome {
+	kind: 'JAIL';
+	fine: number;
+	skipTurns: number;
+}
+
+// 감옥에서 굴림을 쉬는 턴
+export interface JailSkipOutcome {
+	kind: 'JAIL_SKIP';
+	// 앞으로 더 쉬어야 하는 턴 수
+	remaining: number;
+}
+
+export type TileOutcome =
+	NoneOutcome | EventOutcome | BattleOutcome | CityOutcome | JailOutcome | JailSkipOutcome;
 
 // 칸 효과까지 처리된 사건 (startBonus 는 출발 지점 통과 보상)
 export interface TileEvent {

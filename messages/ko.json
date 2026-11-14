@@ -61,5 +61,11 @@
 	"ui_outcome_boss_win": "보스 격파! 골드 +{gold} (HP -{damage})",
 	"ui_outcome_battle_lose": "전투 패배... (HP -{damage})",
 	"ui_outcome_boss_lose": "보스에게 패배... (HP -{damage})",
-	"ui_outcome_defeated": "쓰러졌습니다! 골드 -{gold}, 출발 칸에서 부활"
+	"ui_outcome_defeated": "쓰러졌습니다! 골드 -{gold}, 출발 칸에서 부활",
+	"ui_outcome_skill": "강타 사용! MP -{mp}",
+	"ui_outcome_city_rest": "도시에서 휴식! HP·MP 전회복 (골드 -{cost})",
+	"ui_outcome_city_poor": "골드가 부족해 쉬지 못했습니다",
+	"ui_outcome_weapon_up": "무기 강화! 공격력 상승 (골드 -{cost})",
+	"ui_outcome_jail": "감옥! 벌금 -{fine}, {turns}턴 쉽니다",
+	"ui_outcome_jail_skip": "감옥에서 쉬는 중... (남은 {remaining}턴)"
 }

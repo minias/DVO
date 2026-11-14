@@ -33,5 +33,9 @@ export const GROWTH_CONFIG = {
 
 	// 전투 승리 경험치 (일반 몬스터, 보스)
 	MONSTER_EXP: 20,
-	BOSS_EXP: 100
+	BOSS_EXP: 100,
+
+	// 무기 최대 단계와 단계당 공격력
+	MAX_WEAPON_TIER: 5,
+	ATTACK_PER_WEAPON_TIER: 3
 } as const;

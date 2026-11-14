@@ -33,6 +33,19 @@ export const TILE_CONFIG = {
 		REWARD_MAX: 200
 	},
 
+	// 도시 칸: 골드를 내고 HP·MP 를 모두 회복하고, 남은 골드로 무기를 한 단계 강화한다
+	CITY: {
+		REST_COST: 20,
+		// 무기 강화 비용 = (현재 무기 단계 + 1) × 이 값
+		WEAPON_COST_PER_TIER: 100
+	},
+
+	// 감옥 칸: 벌금(가진 골드까지만)을 내고 다음 굴림을 쉰다
+	JAIL: { FINE: 30, SKIP_TURNS: 1 },
+
+	// MP 스킬(강타): 전투 라운드마다 MP 가 충분하면 소모하고 공격력이 늘어난다
+	SKILL: { MP_COST: 10, BONUS_ATTACK: 10 },
+
 	// 쓰러졌을 때(HP 0): 골드의 이 비율을 잃고 체력을 모두 회복해 출발 칸에서 부활한다
 	DEFEAT_GOLD_LOSS_RATIO: 0.5
 } as const;
