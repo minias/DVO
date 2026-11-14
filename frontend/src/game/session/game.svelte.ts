@@ -44,8 +44,44 @@ export class GameSession {
 	// 감옥에서 앞으로 쉬어야 하는 턴 수
 	jailTurns = $state(0);
 
+	// 보유 아이템 (서버 인벤토리의 사본. 서버가 없으면 비어 있다)
+	inventory = $state<{ itemId: string; qty: number }[]>([]);
+
 	// 주사위를 굴릴 수 있는지 여부
 	canRoll = $derived(this.phase === 'IDLE');
+
+	// 영웅이 도시 칸에 서 있고 이동 중이 아닐 때만 구매할 수 있다
+	canShop = $derived(this.phase === 'IDLE' && this.tiles[this.heroPosition - 1]?.type === 'CITY');
+
+	// 서버의 아이템 구매·사용 결과를 반영한다. 위치는 건드리지 않고 능력치와 인벤토리만 교체한다.
+	// 이동 중이거나 값이 깨졌으면 무시(false)한다.
+	applyItemResult(save: PlayerStats, inventory: { itemId: string; qty: number }[]): boolean {
+		if (this.phase !== 'IDLE') {
+			return false;
+		}
+		const ints = [save.hp, save.maxHp, save.mp, save.maxMp, save.gold, save.level, save.exp];
+		const valid =
+			[...ints, save.weapon].every((v) => Number.isInteger(v) && v >= 0) &&
+			save.maxHp >= 1 &&
+			save.level >= 1 &&
+			save.hp <= save.maxHp &&
+			save.mp <= save.maxMp;
+		if (!valid) {
+			return false;
+		}
+		this.stats = {
+			hp: save.hp,
+			maxHp: save.maxHp,
+			mp: save.mp,
+			maxMp: save.maxMp,
+			gold: save.gold,
+			level: save.level,
+			exp: save.exp,
+			weapon: save.weapon
+		};
+		this.inventory = inventory.map((e) => ({ itemId: e.itemId, qty: e.qty }));
+		return true;
+	}
 
 	// 주사위를 굴리고 이동을 시작한다. 이미 이동 중이면 무시한다.
 	roll(random?: RandomSource): void {

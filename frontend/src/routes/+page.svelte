@@ -4,6 +4,7 @@
 	import { createGameSession } from '$game/session/game.svelte';
 	import GameCanvas from '$lib/game/GameCanvas.svelte';
 	import ActionBar from '$lib/action/ActionBar.svelte';
+	import ItemPanel from '$lib/action/ItemPanel.svelte';
 	import TurnStatus from '$lib/player/TurnStatus.svelte';
 	import LanguageSwitcher from '$lib/i18n/LanguageSwitcher.svelte';
 	import { localeState } from '$lib/i18n/locale.svelte';
@@ -15,7 +16,7 @@
 	const session = createGameSession();
 
 	// 서버가 있으면 세이브를 복원하고, 턴이 끝날 때마다 저장한다 (서버가 없으면 아무 일도 하지 않음)
-	let sync: SaveSync | null = null;
+	let sync = $state<SaveSync | null>(null);
 	onMount(() => {
 		void startSaveSync(session).then((s) => (sync = s));
 	});
@@ -38,6 +39,9 @@
 		<LanguageSwitcher />
 		<TurnStatus {session} />
 		<StatusBar {session} />
+		{#if sync}
+			<ItemPanel {session} {sync} />
+		{/if}
 		<ActionBar {session} />
 	{/key}
 </div>

@@ -68,5 +68,11 @@
 	"ui_outcome_city_poor": "Not enough gold to rest",
 	"ui_outcome_weapon_up": "Weapon upgraded! Attack up (Gold -{cost})",
 	"ui_outcome_jail": "Jail! Fine -{fine}, skip {turns} turn(s)",
-	"ui_outcome_jail_skip": "Serving time... ({remaining} turn(s) left)"
+	"ui_outcome_jail_skip": "Serving time... ({remaining} turn(s) left)",
+	"ui_inventory": "Items",
+	"item_potion_hp": "HP Potion",
+	"item_potion_mp": "MP Potion",
+	"item_elixir": "Elixir",
+	"action_use_item": "Use",
+	"action_buy_item": "Buy {price}G"
 }

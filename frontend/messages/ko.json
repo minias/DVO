@@ -68,5 +68,11 @@
 	"ui_outcome_city_poor": "골드가 부족해 쉬지 못했습니다",
 	"ui_outcome_weapon_up": "무기 강화! 공격력 상승 (골드 -{cost})",
 	"ui_outcome_jail": "감옥! 벌금 -{fine}, {turns}턴 쉽니다",
-	"ui_outcome_jail_skip": "감옥에서 쉬는 중... (남은 {remaining}턴)"
+	"ui_outcome_jail_skip": "감옥에서 쉬는 중... (남은 {remaining}턴)",
+	"ui_inventory": "아이템",
+	"item_potion_hp": "체력 물약",
+	"item_potion_mp": "마나 물약",
+	"item_elixir": "엘릭서",
+	"action_use_item": "사용",
+	"action_buy_item": "구매 {price}G"
 }
