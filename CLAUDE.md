@@ -118,6 +118,14 @@ AI agents MUST immediately **HALT execution and ask the human user in Korean for
 
 ---
 
+## 개발 환경 (macOS · zsh · 샌드박스)
+- 셸은 **zsh**, OS 는 macOS(BSD 도구)다. `--include=*.ts` 같은 glob 은 따옴표로 감싸고, `sed -i` 는 BSD 문법이 달라 쓰지 말고 python 이나 Edit 도구로 수정한다.
+- Bash 는 샌드박스에서 실행된다. 샌드박스 제외 대상은 `git push*`, `git fetch*`, `gh *`, `npm audit*`, `npm update*`, `npm install*` 이며 **명령 전체가 그 문자열로 시작할 때만** 적용된다. `&&`·`|`·`;` 로 잇거나 앞에 다른 명령을 붙이지 말고 단독 실행한다.
+- `npm run` 은 샌드박스에서 조용히 255 로 실패하므로 `node_modules/.bin/<도구>` 를 직접 실행한다. 로컬은 포트 바인딩이 불가해 브라우저(client) 테스트는 CI 로 확인한다.
+- 로컬 게이트 순서: `paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide` → `svelte-kit sync` → `svelte-check` → `prettier --check .` → `eslint .` → `vitest run --project server` → `vite build`.
+- 임시 파일(PR 본문 등)은 스크래치패드에 Write 도구로 만들고 절대 경로로 `--body-file` 에 넘긴다. 샌드박스 안팎의 `$TMPDIR` 이 달라 셸 변수는 쓰지 않는다.
+- 새 브랜치는 `git branch X origin/dev --no-track` 후 `git switch X` 로 만든다. `.claude/agents/*` 는 샌드박스에서 교체할 수 없으므로 낡은 브랜치로 전환하지 않는다.
+
 ## 정책 파일 보호 (CRITICAL)
 - 정책 파일은 **사용자의 명시적 승인 없이 AI(메인·서브 에이전트 모두)가 단독으로 수정·추가·삭제하지 않는다.**
 - 정책 파일 범위: 이 `CLAUDE.md`, 상위 `CLAUDE.md`와 `docs/LOCAL_CLAUDE.md`, `.claude/settings.json`·`.claude/settings.local.json`, `.claude/agents/*.md`, 권한(permissions)·훅(hooks) 설정, 그리고 규칙·원칙을 담은 정책 문서.
