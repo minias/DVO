@@ -10,6 +10,7 @@
 	"ui_hp": "HP {current}/{max}",
 	"ui_mp": "MP {current}/{max}",
 	"ui_gold": "골드 {amount}",
+	"ui_weapon": "무기 +{tier}",
 	"ui_level": "Lv.{level} (EXP {exp}/{next})",
 	"ui_level_max": "Lv.{level} (MAX)",
 	"ui_outcome_exp": "경험치 +{amount}",
