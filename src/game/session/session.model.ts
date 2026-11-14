@@ -63,6 +63,9 @@ export interface BattleOutcome {
 	// 전투 중 잃은 HP 총량
 	damageTaken: number;
 	goldGained: number;
+	// 전투 승리로 얻은 경험치와 오른 레벨 수
+	expGained: number;
+	levelsGained: number;
 	defeated: boolean;
 	goldLost: number;
 }

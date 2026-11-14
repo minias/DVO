@@ -1,10 +1,11 @@
 // src/game/session/tile.logic.ts
 
+import { GROWTH_CONFIG } from '$config/player.config';
 import { TILE_CONFIG } from '$config/tile.config';
 import type { RandomSource } from '../dice/dice.model';
 import type { TileType } from '../board/board.model';
 import type { PlayerStats } from '../player/player.model';
-import { changeGold, changeHp, isDefeated } from '../player/player.logic';
+import { attackBonus, changeGold, changeHp, gainExp, isDefeated } from '../player/player.logic';
 import type { BattleOutcome, EventEffect, EventOutcome, TileOutcome } from './session.model';
 
 // 칸 효과 처리 결과: 바뀐 능력치와 일어난 일, 부활(출발 칸 복귀) 여부
@@ -75,10 +76,13 @@ function resolveBattle(stats: PlayerStats, boss: boolean, random: RandomSource):
 	let foeHp: number = foe.HP;
 	let current = stats;
 	let won = false;
+	// 레벨에 따른 공격력 보정
+	const bonus = attackBonus(stats.level);
 
 	// 공격력 최솟값이 1 이상이라 반드시 끝나지만, 설정 실수로 무한 반복하지 않게 상한을 둔다
 	for (let round = 0; round < 200; round++) {
-		foeHp -= randomInt(TILE_CONFIG.PLAYER_ATTACK.MIN, TILE_CONFIG.PLAYER_ATTACK.MAX, random);
+		foeHp -=
+			randomInt(TILE_CONFIG.PLAYER_ATTACK.MIN, TILE_CONFIG.PLAYER_ATTACK.MAX, random) + bonus;
 		if (foeHp <= 0) {
 			won = true;
 			break;
@@ -92,8 +96,10 @@ function resolveBattle(stats: PlayerStats, boss: boolean, random: RandomSource):
 
 	const damageTaken = stats.hp - current.hp;
 	const goldGained = won ? randomInt(foe.REWARD_MIN, foe.REWARD_MAX, random) : 0;
-	const rewarded = changeGold(current, goldGained);
-	const defeat = applyDefeat(rewarded);
+	const expGained = won ? (boss ? GROWTH_CONFIG.BOSS_EXP : GROWTH_CONFIG.MONSTER_EXP) : 0;
+	// 승리했다면 체력이 남아 있으므로 레벨업 회복이 부활 처리와 겹치지 않는다
+	const grown = gainExp(changeGold(current, goldGained), expGained);
+	const defeat = applyDefeat(grown.stats);
 
 	const outcome: BattleOutcome = {
 		kind: 'BATTLE',
@@ -101,6 +107,8 @@ function resolveBattle(stats: PlayerStats, boss: boolean, random: RandomSource):
 		won,
 		damageTaken,
 		goldGained,
+		expGained,
+		levelsGained: grown.levelsGained,
 		defeated: defeat.defeated,
 		goldLost: defeat.goldLost
 	};

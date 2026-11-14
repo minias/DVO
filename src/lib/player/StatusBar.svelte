@@ -2,6 +2,8 @@
 
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { GROWTH_CONFIG } from '$config/player.config';
+	import { expToNext } from '$game/player/player.logic';
 	import type { GameSession } from '$game/session/game.svelte';
 
 	let { session }: { session: GameSession } = $props();
@@ -19,6 +21,15 @@
 	const mpPercent = $derived(toPercent(session.stats.mp, session.stats.maxMp));
 	const isLowHp = $derived(hpPercent <= LOW_HP_RATIO * 100);
 
+	const levelLabel = $derived(
+		session.stats.level >= GROWTH_CONFIG.MAX_LEVEL
+			? m.ui_level_max({ level: session.stats.level })
+			: m.ui_level({
+					level: session.stats.level,
+					exp: session.stats.exp,
+					next: expToNext(session.stats.level)
+				})
+	);
 	const hpLabel = $derived(m.ui_hp({ current: session.stats.hp, max: session.stats.maxHp }));
 	const mpLabel = $derived(m.ui_mp({ current: session.stats.mp, max: session.stats.maxMp }));
 </script>
@@ -28,6 +39,8 @@
 	class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white"
 	aria-label={m.ui_status()}
 >
+	<p class="font-semibold text-violet-300">{levelLabel}</p>
+
 	<div class="flex min-w-32 flex-1 flex-col gap-1">
 		<span class="font-semibold">{hpLabel}</span>
 		<div
