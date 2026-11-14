@@ -20,7 +20,24 @@ export interface MoveResult {
 	passedStart: boolean;
 }
 
+// 주사위를 굴린 사건
+export interface RolledEvent {
+	type: 'ROLLED';
+
+	// 각 주사위의 눈금
+	values: number[];
+
+	// 눈금의 합
+	total: number;
+}
+
+// 이동이 끝난 사건
+export interface MovedEvent {
+	type: 'MOVED';
+
+	move: MoveResult;
+}
+
 // 게임 안에서 일어난 사건 (향후 이벤트 타일·전투 처리의 입력으로 사용)
-export type GameEvent =
-	| { type: 'ROLLED'; values: number[]; total: number }
-	| { type: 'MOVED'; move: MoveResult };
+// 유니온을 이름 있는 타입으로 나눠 prettier 버전과 상관없이 같은 서식이 나오게 한다
+export type GameEvent = RolledEvent | MovedEvent;
