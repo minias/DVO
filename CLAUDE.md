@@ -1,5 +1,6 @@
 # Project Context & Agentic Engineering Rules (DVO)
 
+세션 시작 시 `docs/CONTEXT.md` 를 먼저 읽고 이어서 작업하며, 작업 단위가 끝나면 그 파일의 PR 현황과 다음 단계를 갱신한다.
 
 ---
 
