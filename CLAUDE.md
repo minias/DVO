@@ -64,6 +64,7 @@ The main orchestrator session MUST run on **Sonnet** and delegate specialized ta
    - 커밋은 Conventional Commits + 한국어 메시지. `git add -A` 금지, 파일 명시 스테이징.
    - 커밋 전 체크: git 이메일이 `gnuhacker@gmail.com`, 검증 게이트 통과, `.env`/`*.db`/`node_modules`/`docs/IA.md` 미포함.
    - 푸시와 PR 생성은 `git-workflow` 가 사용자 확인 없이 진행한다. 단 `main` 으로의 병합, 태그 푸시, force push, 원격 브랜치 삭제는 사용자 승인 후에만 한다. 병합은 항상 사용자가 승인한다. `gh` 가 샌드박스에서 막히면 사용자에게 `! gh pr create ...` 명령을 제시한다.
+   - 작업 시작·커밋·푸시·PR·병합 직전에는 `git fetch origin` 으로 원격(봇 병합 포함)의 변화를 확인하고, 뒤처졌으면 최신 `dev` 기준으로 진행한다.
 
 ---
 
