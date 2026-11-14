@@ -22,6 +22,11 @@ jobs:
     name: verify (ubuntu + chromium)
     runs-on: ubuntu-latest
 
+    # 앱은 frontend/ 에 있다 (모노레포)
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v7
 
@@ -48,6 +53,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: 의존성 설치
         run: npm ci
@@ -55,7 +61,7 @@ jobs:
       # 문서 전용 변경은 서식 검사만 수행한다
       - name: 문서 서식 검사 (문서 전용 변경)
         if: steps.scope.outputs.docs_only == 'true'
-        run: npx prettier --check .
+        run: npx prettier --check ../README.md ../CONTRIBUTING.md ../SECURITY.md ../CODE_OF_CONDUCT.md
 
       - name: Playwright Chromium 설치 (브라우저 스모크 테스트용)
         if: steps.scope.outputs.docs_only != 'true'

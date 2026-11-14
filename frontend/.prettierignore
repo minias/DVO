@@ -1,0 +1,12 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Miscellaneous
+/static/
+
+# 생성물은 포맷 검사 제외 (루트 문서·정책 파일은 이 디렉터리 밖이라 검사 대상이 아니다)
+/project.inlang/
