@@ -5,9 +5,11 @@ import type { BoardTile } from '../board/board.model';
 import { rollDice } from '../dice/dice.service';
 import type { DiceResult, RandomSource } from '../dice/dice.model';
 import type { PlayerStats } from '../player/player.model';
-import { createInitialStats } from '../player/player.logic';
-import type { GameEvent, MoveResult, TurnPhase } from './session.model';
+import { TILE_CONFIG } from '$config/tile.config';
+import { changeGold, createInitialStats } from '../player/player.logic';
+import type { GameEvent, MoveResult, TileEvent, TurnPhase } from './session.model';
 import { calculateMove } from './turn.logic';
+import { resolveTile } from './tile.logic';
 
 // 게임 한 판의 상태.
 // 화면(캔버스·UI)은 이 상태를 읽기만 하고, 상태 변경은 roll / completeMove 로만 한다.
@@ -36,6 +38,9 @@ export class GameSession {
 	// 마지막으로 발생한 사건 (이벤트 타일·전투 확장용)
 	lastEvent = $state<GameEvent | null>(null);
 
+	// 마지막 칸 효과 결과 (화면의 결과 문구용. 굴림이 시작되면 지운다)
+	lastTile = $state<TileEvent | null>(null);
+
 	// 주사위를 굴릴 수 있는지 여부
 	canRoll = $derived(this.phase === 'IDLE');
 
@@ -48,6 +53,7 @@ export class GameSession {
 		const result = rollDice({}, random);
 		const move = calculateMove(this.heroPosition, result.total, this.tiles.length);
 
+		this.lastTile = null;
 		this.lastRoll = result;
 		this.pendingMove = move;
 		this.phase = 'MOVING';
@@ -55,7 +61,7 @@ export class GameSession {
 	}
 
 	// 이동 연출이 끝났을 때 호출한다. 도착 칸을 확정하고 다음 턴으로 넘어간다.
-	completeMove(): void {
+	completeMove(random?: RandomSource): void {
 		if (this.phase !== 'MOVING' || !this.pendingMove) {
 			return;
 		}
@@ -66,7 +72,20 @@ export class GameSession {
 		this.pendingMove = null;
 		this.phase = 'IDLE';
 		this.turn += 1;
+
+		// 출발 지점을 지났으면 보상을 받고, 도착한 칸의 효과를 처리한다
+		const startBonus = move.passedStart ? TILE_CONFIG.START_PASS_GOLD : 0;
+		const tile = this.tiles[move.to - 1];
+		const resolution = resolveTile(tile.type, changeGold(this.stats, startBonus), random);
+
+		this.stats = resolution.stats;
+		// 쓰러졌으면 출발 칸에서 부활한다
+		if (resolution.respawn) {
+			this.heroPosition = 1;
+		}
+
 		this.lastEvent = { type: 'MOVED', move };
+		this.lastTile = { type: 'TILE', tileId: tile.id, startBonus, outcome: resolution.outcome };
 	}
 }
 

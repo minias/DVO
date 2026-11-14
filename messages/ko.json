@@ -47,5 +47,15 @@
 	"board_type_jail": "감옥",
 	"ui_language": "언어",
 	"ui_language_ko": "한국어",
-	"ui_language_en": "English"
+	"ui_language_en": "English",
+	"ui_outcome_start_bonus": "출발 지점 통과! 골드 +{amount}",
+	"ui_outcome_event_gold_gain": "행운! 골드 +{amount}",
+	"ui_outcome_event_gold_loss": "소매치기! 골드 -{amount}",
+	"ui_outcome_event_hp_heal": "휴식! HP +{amount}",
+	"ui_outcome_event_hp_damage": "함정! HP -{amount}",
+	"ui_outcome_battle_win": "전투 승리! 골드 +{gold} (HP -{damage})",
+	"ui_outcome_boss_win": "보스 격파! 골드 +{gold} (HP -{damage})",
+	"ui_outcome_battle_lose": "전투 패배... (HP -{damage})",
+	"ui_outcome_boss_lose": "보스에게 패배... (HP -{damage})",
+	"ui_outcome_defeated": "쓰러졌습니다! 골드 -{gold}, 출발 칸에서 부활"
 }

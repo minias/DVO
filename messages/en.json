@@ -47,5 +47,15 @@
 	"board_type_jail": "Jail",
 	"ui_language": "Language",
 	"ui_language_ko": "한국어",
-	"ui_language_en": "English"
+	"ui_language_en": "English",
+	"ui_outcome_start_bonus": "Passed Start! Gold +{amount}",
+	"ui_outcome_event_gold_gain": "Lucky! Gold +{amount}",
+	"ui_outcome_event_gold_loss": "Pickpocket! Gold -{amount}",
+	"ui_outcome_event_hp_heal": "Rest! HP +{amount}",
+	"ui_outcome_event_hp_damage": "Trap! HP -{amount}",
+	"ui_outcome_battle_win": "Battle won! Gold +{gold} (HP -{damage})",
+	"ui_outcome_boss_win": "Boss defeated! Gold +{gold} (HP -{damage})",
+	"ui_outcome_battle_lose": "Battle lost... (HP -{damage})",
+	"ui_outcome_boss_lose": "Defeated by the boss... (HP -{damage})",
+	"ui_outcome_defeated": "You fell! Gold -{gold}, revived at Start"
 }
