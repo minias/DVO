@@ -11,7 +11,7 @@ model: haiku
 - `src/game/board/board.data.ts`
 
 ## 규칙
-- 번역 키 규칙: `ui.*`, `action.*`, `board.*`, `monster.*`, `item.*`, `quest.*`, `npc.*`, `system.*`.
+- 번역 키 규칙 (Paraglide 는 키를 함수 이름으로 만들므로 점 대신 `_` 사용): `ui_*`, `action_*`, `board_*`, `monster_*`, `item_*`, `quest_*`, `npc_*`, `system_*`.
 - `ko` 가 기본이며, `ko.json` 과 `en.json` 의 키 집합은 항상 동일하게 유지한다.
 - 데이터 중심: 타일·몬스터·아이템은 코드가 아닌 데이터로 정의한다. 타일 이름은 점진적으로 번역 키로 이전한다.
 - 타일 정의 개수는 `BOARD_CONFIG.EDGE_COUNT` 로 계산되는 칸 수(`4 × (EDGE_COUNT - 1)`)와 일치해야 한다.

@@ -374,3 +374,12 @@ npm run verify     # check → lint → test → build 전체 게이트
 완료 기준
 
 브라우저에서 플레이어가 주사위를 굴리고 보드 위를 이동할 수 있어야 한다.
+
+---
+
+# 기여와 라이선스
+
+- 기여 방법: [CONTRIBUTING.md](CONTRIBUTING.md)
+- 행동 강령: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- 보안 취약점 제보: [SECURITY.md](SECURITY.md)
+- 라이선스: [GPL-3.0](LICENSE)
