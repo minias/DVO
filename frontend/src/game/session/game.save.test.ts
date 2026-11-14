@@ -45,3 +45,23 @@ describe('GameSession 저장·복원', () => {
 		expect(session.restore(SAVE)).toBe(false);
 	});
 });
+
+describe('GameSession 아이템 결과 반영', () => {
+	const STATS = { hp: 90, maxHp: 100, mp: 20, maxMp: 20, gold: 70, level: 2, exp: 5, weapon: 1 };
+
+	it('능력치와 인벤토리를 교체하고 위치는 유지한다', () => {
+		const session = createGameSession();
+		session.restore(SAVE);
+		expect(session.applyItemResult(STATS, [{ itemId: 'potion_hp', qty: 2 }])).toBe(true);
+		expect(session.stats.gold).toBe(70);
+		expect(session.inventory).toEqual([{ itemId: 'potion_hp', qty: 2 }]);
+		expect(session.heroPosition).toBe(4);
+	});
+
+	it('깨진 값이나 이동 중이면 무시한다', () => {
+		const session = createGameSession();
+		expect(session.applyItemResult({ ...STATS, hp: 999 }, [])).toBe(false);
+		session.roll();
+		expect(session.applyItemResult(STATS, [])).toBe(false);
+	});
+});

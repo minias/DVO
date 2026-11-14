@@ -3,6 +3,7 @@
 import type { GameSession } from '$game/session/game.svelte';
 import { getApiBaseUrl } from './http';
 import { createDevUser, fetchSave, putSave } from './save.api';
+import { buyItem, fetchInventory, useItem } from './inventory.api';
 
 const USER_KEY = 'dvo.devUserId';
 
@@ -29,6 +30,9 @@ function writeUserId(id: number): void {
 export interface SaveSync {
 	// 저장 가능한 상태가 되면(턴이 끝난 뒤 등) 호출한다. 실패해도 게임을 멈추지 않는다
 	save(): void;
+	// 아이템 구매·사용. 성공하면 true (세션에 반영 완료), 실패·거부면 false
+	buy(itemId: string): Promise<boolean>;
+	use(itemId: string): Promise<boolean>;
 }
 
 // 임시 사용자를 확보하고 세이브를 복원한다. 어느 단계든 실패하면 null (오프라인 폴백)
@@ -44,6 +48,12 @@ export async function startSaveSync(session: GameSession): Promise<SaveSync | nu
 
 		const saved = await fetchSave(userId);
 		if (saved !== null) session.restore(saved);
+		// 인벤토리 조회 실패는 치명적이지 않다: 빈 상태로 시작한다
+		try {
+			session.inventory = await fetchInventory(userId);
+		} catch {
+			session.inventory = [];
+		}
 
 		const id = userId;
 		let inFlight = false;
@@ -67,7 +77,27 @@ export async function startSaveSync(session: GameSession): Promise<SaveSync | nu
 				}
 			}
 		};
-		return { save: () => void flush() };
+
+		// 구매·사용은 서버가 보는 골드·HP 가 최신이어야 하므로, 진행 중인 저장을 끝내고 최신 상태를 먼저 올린다
+		const itemAction = async (
+			call: (userId: number, itemId: string) => ReturnType<typeof buyItem>,
+			itemId: string
+		): Promise<boolean> => {
+			if (session.phase !== 'IDLE') return false;
+			try {
+				while (inFlight) await new Promise((r) => setTimeout(r, 20));
+				await putSave(id, session.snapshot());
+				const result = await call(id, itemId);
+				return session.applyItemResult(result.save, result.inventory);
+			} catch {
+				return false;
+			}
+		};
+		return {
+			save: () => void flush(),
+			buy: (itemId) => itemAction(buyItem, itemId),
+			use: (itemId) => itemAction(useItem, itemId)
+		};
 	} catch {
 		return null;
 	}
