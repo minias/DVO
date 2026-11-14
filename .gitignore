@@ -30,3 +30,6 @@ docs/IA.md
 
 # Claude Code 로컬 설정·에이전트 정의 (공개 저장소에 노출하지 않음)
 .claude/
+
+# 백엔드 SQLite 파일
+backend/*.db*
