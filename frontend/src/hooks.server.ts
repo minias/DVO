@@ -1,4 +1,4 @@
-// import type { Handle } from '@sveltejs/kit';
+// import type { Handle } from '@sveltejs/kit/hooks';
 // import { getTextDirection } from '$lib/paraglide/runtime';
 // import { paraglideMiddleware } from '$lib/paraglide/server';
 
@@ -17,7 +17,7 @@
 // export const handle: Handle = handleParaglide;
 // src/hooks.server.ts
 
-import type { Handle } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit/hooks';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	return resolve(event);
