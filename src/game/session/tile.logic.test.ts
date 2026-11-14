@@ -54,6 +54,14 @@ describe('resolveTile', () => {
 		expect(result.respawn).toBe(false);
 	});
 
+	it('전투 승리: 경험치를 얻고 모으면 레벨업한다', () => {
+		const nearLevelUp = { ...createInitialStats(), exp: 40 };
+		const result = resolveTile('BATTLE', nearLevelUp, high);
+
+		expect(result.outcome).toMatchObject({ kind: 'BATTLE', won: true, levelsGained: 1 });
+		expect(result.stats.level).toBe(2);
+	});
+
 	it('전투 패배(HP 0): 골드 절반을 잃고 체력을 회복해 부활 표시를 한다', () => {
 		const weak = { ...createInitialStats(), hp: 1, gold: 100 };
 		// 영웅 공격은 최소, 몬스터 공격은 최대: 영웅이 먼저 쓰러진다

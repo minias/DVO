@@ -42,6 +42,10 @@
 				lines.push(o.won ? m.ui_outcome_battle_win(params) : m.ui_outcome_battle_lose(params));
 			}
 		}
+		if (o.kind === 'BATTLE' && o.expGained > 0) {
+			lines.push(m.ui_outcome_exp({ amount: o.expGained }));
+			if (o.levelsGained > 0) lines.push(m.ui_outcome_level_up({ level: session.stats.level }));
+		}
 		if (o.kind !== 'NONE' && o.defeated) lines.push(m.ui_outcome_defeated({ gold: o.goldLost }));
 
 		return lines;

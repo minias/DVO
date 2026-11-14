@@ -16,4 +16,10 @@ export interface PlayerStats {
 
 	// 보유 골드 (0 이상)
 	gold: number;
+
+	// 현재 레벨 (1 ~ 최대 레벨)
+	level: number;
+
+	// 현재 레벨에서 쌓은 경험치 (최대 레벨에서는 0 으로 고정)
+	exp: number;
 }
