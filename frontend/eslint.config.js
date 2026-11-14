@@ -6,7 +6,14 @@ import svelte from 'eslint-plugin-svelte';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import svelteConfig from './svelte.config.js';
+
+// kit 3 부터 svelte.config.js 가 없으므로, 린터용 Svelte 컴파일러 옵션을 여기에 둔다 (vite.config.ts 와 같은 값)
+const svelteConfig = {
+	compilerOptions: {
+		/** @param {{ filename: string }} info */
+		runes: ({ filename }) => (filename.split(/[/\\]/).includes('node_modules') ? undefined : true)
+	}
+};
 
 const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 

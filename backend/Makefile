@@ -4,7 +4,7 @@
 GOVULNCHECK_VERSION := v1.1.4
 
 .DEFAULT_GOAL := help
-.PHONY: help run build fmt fmt-check vet test vuln check clean
+.PHONY: help run build fmt fmt-check vet test vuln vuln-summary outdated update check clean
 
 help: ## 대상 목록 보기
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -29,6 +29,16 @@ test: ## 단위 테스트
 
 vuln: ## 취약점 점검 (govulncheck)
 	go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...
+
+vuln-summary: ## 취약점 이름과 수정 버전만 요약 (출력이 길 때)
+	@go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./... 2>&1 | grep -E "^Vulnerability|Found in|Fixed in|No vulnerabilities" | sort -u || true
+
+outdated: ## 갱신 가능한 의존성 목록
+	@go list -u -m -f '{{if .Update}}{{.Path}} {{.Version}} -> {{.Update.Version}}{{end}}' all
+
+update: ## 의존성을 모두 최신으로 올리고 정리 (이후 make check 로 확인)
+	go get -u ./...
+	go mod tidy
 
 check: fmt-check vet test ## 커밋 전 게이트 (서식 → vet → 테스트). CI 의 backend 잡과 같다
 

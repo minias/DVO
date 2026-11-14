@@ -29,13 +29,32 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v6
+      # backend/ 가 바뀌지 않은 PR(프론트·문서 전용)은 백엔드 검증을 건너뛴다
+      - name: 변경 범위 판정 (백엔드 변경 여부)
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          run_backend=true
+          if [ "$EVENT" = "pull_request" ]; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            run_backend=false
+            if git diff --name-only "$BASE_SHA" HEAD | grep -qE '^backend/|^\.github/workflows/ci\.yml$'; then
+              run_backend=true
+            fi
+          fi
+          echo "run_backend=$run_backend" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-go@v7
+        if: steps.scope.outputs.run_backend == 'true'
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: backend/go.sum
 
       # 서식 → vet → 테스트. 로컬과 같은 `make check` 를 쓴다
       - name: 검증 게이트
+        if: steps.scope.outputs.run_backend == 'true'
         run: make check
 
   verify:

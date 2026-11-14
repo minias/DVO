@@ -27,8 +27,45 @@ permissions:
   contents: read
 
 jobs:
+  # 역할(프론트·백엔드)별로 필요한 점검만 실행한다. push·schedule 은 항상 둘 다 실행한다
+  changes:
+    name: 변경 범위 판정
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.scope.outputs.frontend }}
+      backend: ${{ steps.scope.outputs.backend }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 변경 범위 판정
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          frontend=true
+          backend=true
+          if [ "$EVENT" = "pull_request" ]; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            files=$(git diff --name-only "$BASE_SHA" HEAD)
+            frontend=false
+            backend=false
+            # 이 워크플로 자체가 바뀌면 전체를 검증한다
+            if echo "$files" | grep -q '^\.github/workflows/security\.yml$'; then
+              frontend=true
+              backend=true
+            fi
+            if echo "$files" | grep -q '^frontend/'; then frontend=true; fi
+            if echo "$files" | grep -q '^backend/'; then backend=true; fi
+          fi
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+
   audit:
     name: npm audit
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,6 +94,8 @@ jobs:
 
   govulncheck:
     name: govulncheck
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     # 백엔드가 실제로 호출하는 코드에 도달하는 취약점이 있으면 실패
     runs-on: ubuntu-latest
     defaults:
@@ -66,7 +105,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: backend/go.sum
