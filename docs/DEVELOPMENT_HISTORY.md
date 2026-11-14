@@ -82,6 +82,18 @@ DVO/
 - 보안 워크플로: `npm audit`(운영 의존성 high 이상 차단), `govulncheck`, dependency review, CodeQL.
 - 반복 명령: 백엔드는 `backend/Makefile`(`make check`, `make vuln`), 프론트는 `npm run verify` 와 `npm run verify:local`.
 
+### 보안 갱신 이력
+
+| 시점       | PR      | 내용                                                                                                                                                   |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M1~M5      | #22~#25 | 취약점 정리, `overrides`(cookie, postcss-selector-parser, minimatch), SECURITY.md 추가                                                                 |
+| 2026-11-14 | #49     | Dependabot gomod·vitest 그룹, `govulncheck` 게이트 추가                                                                                                |
+| 2026-11-14 | #57     | 의존성 일괄 갱신(`@sveltejs/kit` 3, vitest 5, Go 1.26.11 — 표준 라이브러리 취약점 때문에 하한 상향), 역할별 보안 점검 분리, Dependabot PR #44~#54 정리 |
+| 2026-11-14 | —       | 현재 전체 1건(low): `deepmerge` #46, 개발 의존성, 수정판 없음. 운영 의존성 0건                                                                         |
+
+- `npm audit fix --force` 는 `@sveltejs/kit` 를 다운그레이드하므로 금지한다.
+- 수정판이 나오기 전까지 #46 은 유지하고, 운영 의존성에 high 이상이 생기면 main 병합을 차단한다.
+
 ## 7. 로드맵
 
 | 단계               | 내용                                                                                       | 상태            |
